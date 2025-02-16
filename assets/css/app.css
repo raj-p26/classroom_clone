@@ -6,5 +6,21 @@
 
 button,
 a {
-  @apply rounded-[20px] px-4 h-[40px] flex items-center justify-center;
+  @apply rounded-[20px] px-4 h-[40px] flex items-center justify-center relative;
+}
+
+@keyframes animate-ripple {
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.ripple-container {
+  @apply overflow-hidden;
 }

@@ -1,1 +1,38 @@
-<h1>Dashboard here</h1>
+<.flash_group flash={@flash} />
+
+<button
+  class="bg-primary-container-dark text-on-primary-container-dark"
+  phx-click={JS.patch(~p"/class")}
+>
+  Goto Class
+</button>
+
+<div class="fixed bottom-14 right-14 flex items-center flex-col gap-2">
+  <button
+    class="bg-tertiary-container text-on-tertiary-container dark:bg-tertiary-container-dark dark:text-on-tertiary-container-dark px-3 py-6"
+    phx-hook="RippleEffect"
+    id="join-btn"
+    title="Join Class"
+    phx-click={JS.patch("/join")}
+  >
+    <.icon name="hero-arrow-right-end-on-rectangle" />
+  </button>
+
+  <button
+    class="bg-primary-container text-on-primary-container dark:bg-primary-container-dark dark:text-on-primary-container-dark px-6 py-9"
+    phx-hook="RippleEffect"
+    id="join-btn"
+    title="Create Class"
+    phx-click={JS.patch("/create")}
+  >
+    <.icon name="hero-plus" />
+  </button>
+</div>
+
+<.modal :if={@live_action === :join} show id="join-modal" on_cancel={JS.patch(~p"/dashboard")}>
+  <h1 class="text-2xl">Join a Class</h1>
+</.modal>
+
+<.modal :if={@live_action === :create} show id="create-modal" on_cancel={JS.patch(~p"/dashboard")}>
+  <h1 class="text-2xl">Create a Class</h1>
+</.modal>

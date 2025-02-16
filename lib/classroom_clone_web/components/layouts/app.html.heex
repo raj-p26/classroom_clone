@@ -1,4 +1,15 @@
-<main>
-  <.flash_group flash={@flash} />
+<nav class="flex items-center justify-between fixed top-0 left-0 right-0 h-[80px] border-b border-b-outline/80 px-6">
+  <div class="flex items-center gap-2">
+    <img src="/images/Google_Classroom_Logo.png" class="h-8" />
+    <.link patch={~p"/dashboard"}>Classroom Clone</.link>
+  </div>
+  <ul class="flex items-center justify-around">
+    <li>
+      Logged In as: {@user[:username]}
+    </li>
+  </ul>
+</nav>
+
+<main class="mt-[84px]">
   {@inner_content}
 </main>

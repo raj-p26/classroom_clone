@@ -29,6 +29,10 @@ defmodule ClassroomCloneWeb.Router do
     get "/logout", AuthController, :logout
 
     live "/dashboard", Dashboard
+    live "/join", Dashboard, :join
+    live "/create", Dashboard, :create
+
+    live "/class", Class
   end
 
   scope "/auth", ClassroomCloneWeb do

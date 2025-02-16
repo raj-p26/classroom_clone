@@ -1,4 +1,5 @@
 #!/usr/bin/bash
 
+clear
 source .env
 mix phx.server
