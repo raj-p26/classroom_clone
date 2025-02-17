@@ -49,11 +49,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
       class="relative z-50 hidden"
     >
-      <div
-        id={"#{@id}-bg"}
-        class="bg-surface/90 dark:bg-surface-dark/90 fixed inset-0 transition-opacity"
-        aria-hidden="true"
-      />
+      <div id={"#{@id}-bg"} class="bg-scrim/40 fixed inset-0 transition-opacity" aria-hidden="true" />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -69,7 +65,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="shadow-zinc-700/10 relative hidden rounded-2xl bg-surface-container-high text-on-surface dark:bg-surface-container-high-dark dark:text-on-surface-dark p-14 shadow-lg transition"
+              class="shadow-zinc-700/10 relative hidden rounded-2xl bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark p-14 shadow-lg transition"
             >
               <div class="absolute top-6 right-5">
                 <button
@@ -206,7 +202,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8 bg-white">
+      <div class="mt-10 space-y-8">
         {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
           {render_slot(action, f)}
@@ -235,8 +231,8 @@ defmodule ClassroomCloneWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
+        "phx-submit-loading:opacity-75 rounded-full py-2 px-3",
+        "text-sm font-semibold leading-6 active:text-white/80",
         @class
       ]}
       {@rest}
@@ -381,7 +377,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
+          "mt-2 block w-full rounded-lg focus:ring-0 sm:text-sm sm:leading-6 bg-transparent",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
@@ -433,7 +429,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
     ~H"""
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
+        <h1 class="text-lg font-semibold leading-8">
           {render_slot(@inner_block)}
         </h1>
         <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
@@ -602,7 +598,6 @@ defmodule ClassroomCloneWeb.CoreComponents do
   end
 
   attr :id, :string, required: true
-
   slot :menu_item, required: true
 
   def option_menu(assigns) do
@@ -614,6 +609,27 @@ defmodule ClassroomCloneWeb.CoreComponents do
       class="relative shadow-lg h-12 flex items-center px-3 cursor-pointer bg-surface-container text-on-surface-container dark:bg-surface-container-dark dark:text-on-surface-container-dark"
     >
       {render_slot(item)}
+    </div>
+    """
+  end
+
+  attr :type, :string,
+    values: ~w(elevated-card filled-card outlined-card),
+    default: "outlined-card"
+
+  attr :id, :string, required: false
+  attr :class, :string, default: ""
+
+  slot :inner_block, required: true
+  slot :card_title, required: false
+
+  def card(assigns) do
+    ~H"""
+    <div class={[@type, @class]}>
+      <%= if @card_title !== [] do %>
+        <h1 class="text-2xl font-bold mb-4">{render_slot(@card_title)}</h1>
+      <% end %>
+      {render_slot(@inner_block)}
     </div>
     """
   end

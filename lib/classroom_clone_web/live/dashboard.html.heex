@@ -21,7 +21,7 @@
   <button
     class="bg-primary-container text-on-primary-container dark:bg-primary-container-dark dark:text-on-primary-container-dark px-6 py-9"
     phx-hook="RippleEffect"
-    id="join-btn"
+    id="create-btn"
     title="Create Class"
     phx-click={JS.patch("/create")}
   >
@@ -30,9 +30,29 @@
 </div>
 
 <.modal :if={@live_action === :join} show id="join-modal" on_cancel={JS.patch(~p"/dashboard")}>
-  <h1 class="text-2xl">Join a Class</h1>
+  <h1 class="text-xl font-bold mb-6">Join class</h1>
+  <.card class="mb-5">
+    <p>You are currently signed in as:</p>
+    <p class="text-lg font-bold">{@user.username}</p>
+    <p class="font-light">{@user.email}</p>
+  </.card>
+  <.card>
+    <:card_title>Class Code</:card_title>
+    <p class="mb-4">Ask your teacher or friend for the class code, then enter it here.</p>
+    <.input name="class_code" value="" placeholder="Class Code" />
+    <p class="mt-6">To sign in with a class code</p>
+    <ul class="list-disc list-inside">
+      <li>Use an authorized account</li>
+      <li>Use a class code</li>
+    </ul>
+  </.card>
 </.modal>
 
 <.modal :if={@live_action === :create} show id="create-modal" on_cancel={JS.patch(~p"/dashboard")}>
-  <h1 class="text-2xl">Create a Class</h1>
+  <.live_component
+    module={CreateClassComponent}
+    id="create-class-component"
+    class={@class}
+    user_id={@user.id}
+  />
 </.modal>

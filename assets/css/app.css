@@ -24,3 +24,19 @@ a {
 .ripple-container {
   @apply overflow-hidden;
 }
+
+.base-card {
+  @apply rounded-[12px] p-4;
+}
+
+.elevated-card {
+  @apply base-card bg-surface-container-low text-on-surface dark:bg-surface-container-low-dark dark:text-on-surface-dark shadow-lg;
+}
+
+.outlined-card {
+  @apply base-card bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark border border-outline-variant/50;
+}
+
+.filled-card {
+  @apply base-card bg-surface-container-highest text-on-surface dark:bg-surface-container-highest-dark dark:text-on-surface-dark;
+}

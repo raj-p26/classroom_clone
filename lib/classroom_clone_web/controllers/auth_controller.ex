@@ -13,16 +13,19 @@ defmodule ClassroomCloneWeb.AuthController do
       avatar: auth.info.image
     }
 
-    case Accounts.get_user_by_google_id(auth.uid) do
-      nil ->
-        Accounts.create_user(user_info)
+    current_user =
+      case Accounts.get_user_by_google_id(auth.uid) do
+        nil ->
+          {:ok, user} = Accounts.create_user(user_info)
+          user
 
-      user ->
-        Accounts.update_user(user, user_info)
-    end
+        existing_user ->
+          {:ok, user} = Accounts.update_user(existing_user, user_info)
+          user
+      end
 
     conn
-    |> put_session(:user, user_info)
+    |> put_session(:user, current_user)
     |> put_flash(:info, "Logged In Successfully")
     |> redirect(to: "/dashboard")
   end
