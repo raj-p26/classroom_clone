@@ -4,7 +4,7 @@ defmodule ClassroomClone.Classroom.Class do
   alias ClassroomClone.Accounts.User
 
   @primary_key {:id, Ecto.UUID, autogenerate: true}
-  @foreign_key_type :string
+  @foreign_key_type Ecto.UUID
   schema "classes" do
     field :name, :string
     field :subject, :string

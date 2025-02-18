@@ -20,7 +20,7 @@ defmodule ClassroomCloneWeb.CreateClassComponent do
         <:actions>
           <.button
             phx-disable-with="Creating..."
-            class="bg-secondary text-on-secondary dark:bg-secondary-dark dark:text-on-secondary-dark"
+            class="border border-outline text-primary dark:border-outline-dark dark:text-primary-dark"
           >
             Create
           </.button>
@@ -56,7 +56,7 @@ defmodule ClassroomCloneWeb.CreateClassComponent do
 
   @impl true
   def handle_event("save", %{"class" => class_params}, socket) do
-    class_params = Map.put(class_params, "user_id", Integer.to_string(socket.assigns.user_id))
+    class_params = Map.put(class_params, "user_id", socket.assigns.user_id)
 
     case Classroom.create_class(class_params) do
       {:ok, _class} ->

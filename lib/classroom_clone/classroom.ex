@@ -101,4 +101,136 @@ defmodule ClassroomClone.Classroom do
   def change_class(%Class{} = class, attrs \\ %{}) do
     Class.changeset(class, attrs)
   end
+
+  alias ClassroomClone.Classroom.Enrollment
+
+  @doc """
+  Returns the list of enrollments.
+
+  ## Examples
+
+      iex> list_enrollments()
+      [%Enrollment{}, ...]
+
+  """
+  def list_enrollments do
+    Repo.all(Enrollment)
+  end
+
+  @doc """
+  Gets a single enrollment.
+
+  Raises `Ecto.NoResultsError` if the Enrollment does not exist.
+
+  ## Examples
+
+      iex> get_enrollment!(123)
+      %Enrollment{}
+
+      iex> get_enrollment!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_enrollment!(id), do: Repo.get!(Enrollment, id)
+
+  @doc """
+  Creates a enrollment.
+
+  ## Examples
+
+      iex> create_enrollment(%{field: value})
+      {:ok, %Enrollment{}}
+
+      iex> create_enrollment(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_enrollment(attrs \\ %{}) do
+    %Enrollment{}
+    |> Enrollment.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a enrollment.
+
+  ## Examples
+
+      iex> update_enrollment(enrollment, %{field: new_value})
+      {:ok, %Enrollment{}}
+
+      iex> update_enrollment(enrollment, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_enrollment(%Enrollment{} = enrollment, attrs) do
+    enrollment
+    |> Enrollment.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a enrollment.
+
+  ## Examples
+
+      iex> delete_enrollment(enrollment)
+      {:ok, %Enrollment{}}
+
+      iex> delete_enrollment(enrollment)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_enrollment(%Enrollment{} = enrollment) do
+    Repo.delete(enrollment)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking enrollment changes.
+
+  ## Examples
+
+      iex> change_enrollment(enrollment)
+      %Ecto.Changeset{data: %Enrollment{}}
+
+  """
+  def change_enrollment(%Enrollment{} = enrollment, attrs \\ %{}) do
+    Enrollment.changeset(enrollment, attrs)
+  end
+
+  def class_by_user(user_id) do
+    Class
+    |> where([c], c.user_id == ^user_id)
+    |> Repo.all()
+  end
+
+  def enrolled_class_by_user(user_id) do
+    Enrollment
+    |> where([e], e.user_id == ^user_id)
+    |> Repo.all()
+  end
+
+  def get_class_by_join_code(join_code) do
+    try do
+      Class
+      |> where([c], c.id == ^join_code)
+      |> Repo.one()
+    rescue
+      _ -> nil
+    end
+  end
+
+  def check_if_user_exists(join_code, user_id) do
+    try do
+      record =
+        Enrollment
+        |> where([e], e.class_id == ^join_code and e.user_id == ^user_id)
+        |> Repo.one()
+
+      if record != nil, do: raise("Already Joined")
+      {:ok, nil}
+    rescue
+      e -> {:error, Exception.message(e)}
+    end
+  end
 end

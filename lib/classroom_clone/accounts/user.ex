@@ -2,6 +2,7 @@ defmodule ClassroomClone.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:id, Ecto.UUID, autogenerate: true}
   schema "users" do
     field :google_id, :string
     field :username, :string

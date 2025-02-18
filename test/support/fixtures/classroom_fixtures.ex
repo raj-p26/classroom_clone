@@ -18,4 +18,18 @@ defmodule ClassroomClone.ClassroomFixtures do
 
     class
   end
+
+  @doc """
+  Generate a enrollment.
+  """
+  def enrollment_fixture(attrs \\ %{}) do
+    {:ok, enrollment} =
+      attrs
+      |> Enum.into(%{
+
+      })
+      |> ClassroomClone.Classroom.create_enrollment()
+
+    enrollment
+  end
 end
