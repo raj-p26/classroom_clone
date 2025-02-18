@@ -204,10 +204,18 @@ defmodule ClassroomClone.Classroom do
     |> Repo.all()
   end
 
-  def enrolled_class_by_user(user_id) do
+  def enrollments_by_user(user_id) do
     Enrollment
     |> where([e], e.user_id == ^user_id)
     |> Repo.all()
+  end
+
+  def enrolled_classes_by_user(user_id) do
+    Enrollment
+    |> where([e], e.user_id == ^user_id)
+    |> join(:left, [e], c in Class, on: c.id == e.class_id)
+    |> Repo.all()
+    |> Repo.preload(:class)
   end
 
   def get_class_by_join_code(join_code) do
@@ -222,6 +230,13 @@ defmodule ClassroomClone.Classroom do
 
   def check_if_user_exists(join_code, user_id) do
     try do
+      class_owner =
+        Class
+        |> where([c], c.user_id == ^user_id)
+        |> Repo.one()
+
+      if class_owner != nil, do: raise("You are the owner of the class")
+
       record =
         Enrollment
         |> where([e], e.class_id == ^join_code and e.user_id == ^user_id)

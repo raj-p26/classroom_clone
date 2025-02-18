@@ -18,10 +18,7 @@ defmodule ClassroomCloneWeb.CreateClassComponent do
         <.input placeholder="Subject" field={@class_form[:subject]} />
         <.input placeholder="Description (Optional)" field={@class_form[:description]} />
         <:actions>
-          <.button
-            phx-disable-with="Creating..."
-            class="border border-outline text-primary dark:border-outline-dark dark:text-primary-dark"
-          >
+          <.button phx-disable-with="Creating..." class="text-button">
             Create
           </.button>
         </:actions>

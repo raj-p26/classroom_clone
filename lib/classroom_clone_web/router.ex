@@ -32,7 +32,7 @@ defmodule ClassroomCloneWeb.Router do
     live "/join", Dashboard, :join
     live "/create", Dashboard, :create
 
-    live "/class", Class
+    live "/c/:id", Class
   end
 
   scope "/auth", ClassroomCloneWeb do

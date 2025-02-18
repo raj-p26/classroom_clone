@@ -1,19 +1,27 @@
 <.flash_group flash={@flash} />
 
-<button
-  class="bg-primary-container-dark text-on-primary-container-dark"
-  phx-click={JS.patch(~p"/class")}
->
-  Goto Class
-</button>
-
+<h1 class="text-2xl font-bold">Owned Classes:</h1>
 <ul>
-  <li :for={class <- @joined_classes}>{class.name}</li>
+  <li :for={{_, class} <- @streams.owned_classes}>
+    <.link patch={~p"/c/#{class}"}>
+      {class.name}
+    </.link>
+  </li>
+  <h1 class="text-2xl font-bold">Enrolled Classes:</h1>
+  <li :for={{_, enrollment} <- @streams.enrolled_classes}>
+    <.link patch={~p"/c/#{enrollment.class}"}>
+      {enrollment.class.name}
+    </.link>
+  </li>
 </ul>
+
+<.card type="filled-card" id="sample-card" class="w-fit">
+  <:card_title>Card Title</:card_title>
+</.card>
 
 <div class="fixed bottom-14 right-14 flex items-center flex-col gap-2">
   <button
-    class="bg-tertiary-container text-on-tertiary-container dark:bg-tertiary-container-dark dark:text-on-tertiary-container-dark px-3 py-6"
+    class="bg-tertiary-container text-on-tertiary-container dark:bg-tertiary-container-dark dark:text-on-tertiary-container-dark shadow-lg px-3 py-6"
     phx-hook="RippleEffect"
     id="join-btn"
     title="Join Class"
@@ -23,7 +31,7 @@
   </button>
 
   <button
-    class="bg-primary-container text-on-primary-container dark:bg-primary-container-dark dark:text-on-primary-container-dark px-6 py-9"
+    class="bg-primary-container text-on-primary-container dark:bg-primary-container-dark dark:text-on-primary-container-dark shadow-lg px-6 py-9"
     phx-hook="RippleEffect"
     id="create-btn"
     title="Create Class"
@@ -35,20 +43,17 @@
 
 <.modal :if={@live_action === :join} show id="join-modal" on_cancel={JS.patch(~p"/dashboard")}>
   <h1 class="text-xl font-bold mb-6">Join class</h1>
-  <.card class="mb-5">
+  <.card class="mb-5" id="card-1">
     <p>You are currently signed in as:</p>
     <p class="text-lg font-bold">{@user.username}</p>
     <p class="font-light">{@user.email}</p>
   </.card>
-  <.card>
+  <.card id="card-2">
     <:card_title>Class Code</:card_title>
     <p class="mb-4">Ask your teacher or friend for the class code, then enter it here.</p>
     <form method="post" phx-submit="join">
       <.input name="class_code" value="" placeholder="Class Code" />
-      <.button
-        phx-disable-with="Joining..."
-        class="border text-primary dark:text-primary-dark border-outline dark:border-outline-dark mt-4"
-      >
+      <.button phx-disable-with="Joining..." class="outlined-button mt-4">
         Join
       </.button>
     </form>

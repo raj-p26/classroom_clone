@@ -617,15 +617,16 @@ defmodule ClassroomCloneWeb.CoreComponents do
     values: ~w(elevated-card filled-card outlined-card),
     default: "outlined-card"
 
-  attr :id, :string, required: false
+  attr :id, :string, required: true
   attr :class, :string, default: ""
+  attr :clickable, :boolean, default: true
 
   slot :inner_block, required: true
   slot :card_title, required: false
 
   def card(assigns) do
     ~H"""
-    <div class={[@type, @class]}>
+    <div class={[@type, @class]} id={@id} phx-hook={if @clickable, do: "RippleEffect", else: ""}>
       <%= if @card_title !== [] do %>
         <h1 class="text-2xl font-bold mb-4">{render_slot(@card_title)}</h1>
       <% end %>

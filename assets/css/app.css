@@ -22,8 +22,10 @@ a {
 }
 
 .ripple-container {
-  @apply overflow-hidden;
+  @apply relative overflow-hidden;
 }
+
+/* Card Styles */
 
 .base-card {
   @apply rounded-[12px] p-4;
@@ -39,4 +41,26 @@ a {
 
 .filled-card {
   @apply base-card bg-surface-container-highest text-on-surface dark:bg-surface-container-highest-dark dark:text-on-surface-dark;
+}
+
+/* Button Styles */
+
+.elevated-button {
+  @apply shadow-lg bg-surface-container-low dark:bg-surface-container-low-dark text-primary dark:text-primary-dark;
+}
+
+.filled-button {
+  @apply bg-primary dark:bg-primary-dark text-on-primary dark:text-on-primary-dark hover:shadow;
+}
+
+.filled-tonal-button {
+  @apply bg-secondary-container dark:bg-secondary-container-dark text-on-secondary-container dark:text-on-secondary-container-dark hover:shadow;
+}
+
+.outlined-button {
+  @apply border border-outline dark:border-outline-dark text-primary dark:text-primary-dark;
+}
+
+.text-button {
+  @apply text-primary dark:text-primary-dark hover:bg-surface-container/50 dark:hover:bg-surface-container-dark/50;
 }
