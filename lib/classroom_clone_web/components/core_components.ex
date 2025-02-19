@@ -114,9 +114,9 @@ defmodule ClassroomCloneWeb.CoreComponents do
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
       class={[
-        "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
+        "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-[150] rounded-lg p-3 ring-1",
         @kind == :info &&
-          "bg-primary-container dark:bg-primary-container-dark text-on-primary-container dark:text-on-primary-container-dark ring-primary dark:ring-primary-dark fill-primary dark:fill-primary-dark",
+          "bg-primary-container dark:bg-primary-container-dark text-on-primary-container dark:text-on-primary-container-dark shadow-md ring-primary dark:ring-primary-dark fill-primary dark:fill-primary-dark",
         @kind == :error &&
           "bg-error-container dark:bg-error-container-dark text-on-error-container dark:text-on-error-container-dark shadow-md ring-error dark:ring-error-dark fill-error dark:fill-error-dark"
       ]}
@@ -619,14 +619,20 @@ defmodule ClassroomCloneWeb.CoreComponents do
 
   attr :id, :string, required: true
   attr :class, :string, default: ""
-  attr :clickable, :boolean, default: true
+  attr :on_click, JS, default: %JS{}
+  attr :clickable, :boolean, default: false
 
   slot :inner_block, required: true
   slot :card_title, required: false
 
   def card(assigns) do
     ~H"""
-    <div class={[@type, @class]} id={@id} phx-hook={if @clickable, do: "RippleEffect", else: ""}>
+    <div
+      class={[@type, @class]}
+      id={@id}
+      phx-click={@on_click}
+      phx-hook={if @clickable, do: "RippleEffect", else: ""}
+    >
       <%= if @card_title !== [] do %>
         <h1 class="text-2xl font-bold mb-4">{render_slot(@card_title)}</h1>
       <% end %>

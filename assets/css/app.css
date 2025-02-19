@@ -6,7 +6,11 @@
 
 button,
 a {
-  @apply rounded-[20px] px-4 h-[40px] flex items-center justify-center relative;
+  @apply rounded-[20px] px-4 h-[40px] flex items-center justify-center w-fit;
+}
+
+.ripple {
+  @apply absolute rounded-full pointer-events-none bg-black/30 dark:bg-white/30;
 }
 
 @keyframes animate-ripple {
@@ -36,11 +40,11 @@ a {
 }
 
 .outlined-card {
-  @apply base-card bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark border border-outline-variant/50;
+  @apply base-card bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark border border-outline-variant/50 hover:shadow;
 }
 
 .filled-card {
-  @apply base-card bg-surface-container-highest text-on-surface dark:bg-surface-container-highest-dark dark:text-on-surface-dark;
+  @apply base-card bg-surface-container-highest text-on-surface dark:bg-surface-container-highest-dark dark:text-on-surface-dark hover:shadow;
 }
 
 /* Button Styles */

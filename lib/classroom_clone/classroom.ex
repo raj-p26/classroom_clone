@@ -4,6 +4,7 @@ defmodule ClassroomClone.Classroom do
   """
 
   import Ecto.Query, warn: false
+  alias ClassroomClone.Accounts.User
   alias ClassroomClone.Repo
 
   alias ClassroomClone.Classroom.Class
@@ -201,6 +202,13 @@ defmodule ClassroomClone.Classroom do
   def class_by_user(user_id) do
     Class
     |> where([c], c.user_id == ^user_id)
+    |> join(:left, [c], u in User, on: u.id == c.user_id)
+    |> select([c, u], %{
+      id: c.id,
+      name: c.name,
+      subject: c.subject,
+      owner: u.username
+    })
     |> Repo.all()
   end
 
@@ -214,8 +222,15 @@ defmodule ClassroomClone.Classroom do
     Enrollment
     |> where([e], e.user_id == ^user_id)
     |> join(:left, [e], c in Class, on: c.id == e.class_id)
+    |> join(:inner, [e, c], u in User, on: c.user_id == u.id)
+    |> select([e, c, u], %{
+      id: c.id,
+      owner: u.username,
+      name: c.name,
+      subject: c.subject,
+      owner_avatar: u.avatar
+    })
     |> Repo.all()
-    |> Repo.preload(:class)
   end
 
   def get_class_by_join_code(join_code) do
@@ -232,7 +247,7 @@ defmodule ClassroomClone.Classroom do
     try do
       class_owner =
         Class
-        |> where([c], c.user_id == ^user_id)
+        |> where([c], c.user_id == ^user_id and c.id == ^join_code)
         |> Repo.one()
 
       if class_owner != nil, do: raise("You are the owner of the class")
