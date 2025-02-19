@@ -2,29 +2,20 @@
 
 <div class="flex gap-4">
   <div :for={class <- @owned_classes} class="relative">
-    <.card
-      type="outlined-card"
-      id="sample-card"
-      class="w-fit cursor-pointer"
-      on_click={JS.patch(~p"/c/#{class.id}")}
-      clickable
-    >
+    <.card type="outlined-card" id="sample-card" on_click={JS.patch(~p"/c/#{class.id}")} clickable>
       <:card_title>{class.name}</:card_title>
       <p>{class.subject}</p>
       <p>{class.owner}</p>
     </.card>
   </div>
   <div :for={class <- @enrolled_classes}>
-    <.card
-      id="card-2"
-      class="w-fit cursor-pointer"
-      on_click={JS.patch(~p"/c/#{class.id}")}
-      clickable
-    >
+    <.card id={"card-#{class.id}"} on_click={JS.patch(~p"/c/#{class.id}")} clickable>
       <:card_title>{class.name}</:card_title>
       <p>{class.subject}</p>
       <p>{class.owner}</p>
-      <img src={class.owner_avatar} class="rounded-full" />
+      <div class="mt-2">
+        <img src={class.owner_avatar} class="rounded-full block w-fit ml-auto" />
+      </div>
     </.card>
   </div>
 </div>
@@ -53,12 +44,12 @@
 
 <.modal :if={@live_action === :join} show id="join-modal" on_cancel={JS.patch(~p"/dashboard")}>
   <h1 class="text-xl font-bold mb-6">Join class</h1>
-  <.card class="mb-5" id="card-1">
+  <.card class="mb-5 w-full" id="card-1">
     <p>You are currently signed in as:</p>
     <p class="text-lg font-bold">{@user.username}</p>
     <p class="font-light">{@user.email}</p>
   </.card>
-  <.card id="card-2">
+  <.card id="card-2" class="w-full">
     <:card_title>Class Code</:card_title>
     <p class="mb-4">Ask your teacher or friend for the class code, then enter it here.</p>
     <form method="post" phx-submit="join">

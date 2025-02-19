@@ -4,6 +4,10 @@
 
 /* This file is for your main application CSS */
 
+* {
+  @apply transition;
+}
+
 button,
 a {
   @apply rounded-[20px] px-4 h-[40px] flex items-center justify-center w-fit;
@@ -32,7 +36,7 @@ a {
 /* Card Styles */
 
 .base-card {
-  @apply rounded-[12px] p-4;
+  @apply rounded-[12px] p-4 cursor-pointer;
 }
 
 .elevated-card {
@@ -50,7 +54,7 @@ a {
 /* Button Styles */
 
 .elevated-button {
-  @apply shadow-lg bg-surface-container-low dark:bg-surface-container-low-dark text-primary dark:text-primary-dark;
+  @apply shadow bg-surface-container-low dark:bg-surface-container-low-dark text-primary dark:text-primary-dark hover:shadow-lg;
 }
 
 .filled-button {

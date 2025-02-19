@@ -39,6 +39,24 @@ topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
 window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 
+window.addEventListener("load", (e) => {
+  const THEME_MODE = localStorage.getItem("theme-mode") || "light";
+  if (THEME_MODE === "dark")
+    document.querySelector("html").classList.add("dark");
+});
+
+window.addEventListener("phx:toggle-theme", (_info) => {
+  const THEME_MODE = localStorage.getItem("theme-mode") || "light";
+  if (THEME_MODE === "light") {
+    document.querySelector("html").classList.add("dark");
+
+    localStorage.setItem("theme-mode", "dark");
+  } else {
+    document.querySelector("html").classList.remove("dark");
+    localStorage.setItem("theme-mode", "light");
+  }
+});
+
 // connect if there are any LiveViews on the page
 liveSocket.connect();
 
