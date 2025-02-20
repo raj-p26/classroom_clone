@@ -1,4 +1,4 @@
-defmodule ClassroomCloneWeb.CreateClassComponent do
+defmodule ClassroomCloneWeb.Dashboard.CreateClassComponent do
   alias ClassroomClone.Classroom
   use ClassroomCloneWeb, :live_component
 
@@ -18,7 +18,7 @@ defmodule ClassroomCloneWeb.CreateClassComponent do
         <.input placeholder="Subject" field={@class_form[:subject]} />
         <.input placeholder="Description (Optional)" field={@class_form[:description]} />
         <:actions>
-          <.button phx-disable-with="Creating..." class="text-button">
+          <.button phx-disable-with="Creating..." class="text-button ml-auto">
             Create
           </.button>
         </:actions>
@@ -41,7 +41,7 @@ defmodule ClassroomCloneWeb.CreateClassComponent do
 
   @impl true
   def handle_event("validate", %{"class" => class}, socket) do
-    class = Map.put(class, "user_id", socket.assigns.user_id)
+    class = Map.put(class, "user_id", socket.assigns.user.id)
     changeset = Classroom.change_class(socket.assigns.class, class)
 
     socket =
@@ -53,14 +53,23 @@ defmodule ClassroomCloneWeb.CreateClassComponent do
 
   @impl true
   def handle_event("save", %{"class" => class_params}, socket) do
-    class_params = Map.put(class_params, "user_id", socket.assigns.user_id)
+    class_params = Map.put(class_params, "user_id", socket.assigns.user.id)
 
     case Classroom.create_class(class_params) do
-      {:ok, _class} ->
+      {:ok, class} ->
         socket =
           socket
           |> put_flash(:info, "Class created")
           |> push_patch(to: ~p"/dashboard")
+
+        class_info = %{
+          id: class.id,
+          name: class.name,
+          subject: class.subject,
+          owner: socket.assigns.user.username
+        }
+
+        notify_parent(class_info)
 
         {:noreply, socket}
 
@@ -69,4 +78,6 @@ defmodule ClassroomCloneWeb.CreateClassComponent do
         {:noreply, assign(socket, :class_form, to_form(changeset))}
     end
   end
+
+  defp notify_parent(info), do: send(self(), info)
 end

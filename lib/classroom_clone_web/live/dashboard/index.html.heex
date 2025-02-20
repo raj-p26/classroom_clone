@@ -52,18 +52,18 @@
   <.card id="card-2" class="w-full">
     <:card_title>Class Code</:card_title>
     <p class="mb-4">Ask your teacher or friend for the class code, then enter it here.</p>
-    <form method="post" phx-submit="join">
+    <form method="post" id="join-form" phx-submit="join">
       <.input name="class_code" value="" placeholder="Class Code" />
-      <.button phx-disable-with="Joining..." class="outlined-button mt-4">
-        Join
-      </.button>
     </form>
     <p class="mt-6">To sign in with a class code</p>
     <ul class="list-disc list-inside">
       <li>Use an authorized account</li>
-      <li>Use a class code</li>
+      <li>Use a class code with 36 letters or numbers, and no spaces or no symbols.</li>
     </ul>
   </.card>
+  <.button phx-disable-with="Joining..." form="join-form" class="text-button ml-auto mt-4">
+    Join
+  </.button>
 </.modal>
 
 <.modal :if={@live_action === :create} show id="create-modal" on_cancel={JS.patch(~p"/dashboard")}>
@@ -71,6 +71,6 @@
     module={CreateClassComponent}
     id="create-class-component"
     class={@class}
-    user_id={@user.id}
+    user={@user}
   />
 </.modal>

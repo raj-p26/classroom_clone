@@ -28,11 +28,11 @@ defmodule ClassroomCloneWeb.Router do
     get "/", PageController, :redirect_to_dashboard
     get "/logout", AuthController, :logout
 
-    live "/dashboard", Dashboard
-    live "/join", Dashboard, :join
-    live "/create", Dashboard, :create
+    live "/dashboard", Dashboard.Index
+    live "/join", Dashboard.Index, :join
+    live "/create", Dashboard.Index, :create
 
-    live "/c/:id", Class
+    live "/c/:id", Class.Index
   end
 
   scope "/auth", ClassroomCloneWeb do

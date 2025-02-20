@@ -1,4 +1,4 @@
-defmodule ClassroomCloneWeb.Class do
+defmodule ClassroomCloneWeb.Class.Index do
   use ClassroomCloneWeb, :live_view
 
   def mount(params, %{"user" => user}, socket) do

@@ -1,6 +1,6 @@
-defmodule ClassroomCloneWeb.Dashboard do
+defmodule ClassroomCloneWeb.Dashboard.Index do
   alias ClassroomClone.Classroom.Class
-  alias ClassroomCloneWeb.CreateClassComponent
+  alias ClassroomCloneWeb.Dashboard.CreateClassComponent
   alias ClassroomClone.Classroom
   use ClassroomCloneWeb, :live_view
 
@@ -60,5 +60,10 @@ defmodule ClassroomCloneWeb.Dashboard do
         |> push_patch(to: ~p"/dashboard")
 
       {:noreply, socket}
+  end
+
+  def handle_info(msg, %{assigns: assigns} = socket) do
+    owned_classes = assigns.owned_classes ++ [msg]
+    {:noreply, assign(socket, :owned_classes, owned_classes)}
   end
 end
