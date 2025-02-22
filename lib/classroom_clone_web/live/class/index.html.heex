@@ -1,1 +1,10 @@
 <h1>This is class</h1>
+
+<%!-- TODO: Tab Bar --%>
+<.tab_bar id="primary-tab" active_tab={@current_tab}>
+  <:tab name="tab-1" action={JS.patch(~p"/c/#{@class_id}?tab=tab-1")}>Tab 1</:tab>
+  <:tab name="tab-2" action={JS.patch(~p"/c/#{@class_id}?tab=tab-2")}>Tab 2</:tab>
+  <:tab name="tab-3" action={JS.patch(~p"/c/#{@class_id}?tab=tab-3")}>Tab 3</:tab>
+  <:tab name="tab-4" action={JS.patch(~p"/c/#{@class_id}?tab=tab-4")}>Tab 4</:tab>
+  <:tab name="tab-5" action={JS.patch(~p"/c/#{@class_id}?tab=tab-5")}>Tab 5</:tab>
+</.tab_bar>

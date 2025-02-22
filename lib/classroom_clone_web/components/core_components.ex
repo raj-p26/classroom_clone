@@ -625,7 +625,14 @@ defmodule ClassroomCloneWeb.CoreComponents do
   slot :inner_block, required: true
   slot :card_title, required: false
 
+  slot :card_image, required: false do
+    attr :src, :string, required: true
+    attr :class, :string, required: false
+  end
+
   def card(assigns) do
+    if length(assigns.card_image) > 1, do: raise("Assign only 1 card Image")
+
     ~H"""
     <div
       class={[@type, @class]}
@@ -633,11 +640,41 @@ defmodule ClassroomCloneWeb.CoreComponents do
       phx-click={@on_click}
       phx-hook={if @clickable, do: "RippleEffect", else: nil}
     >
+      <%= if @card_image !== [] do %>
+        <div class="w-fit mx-auto py-4">
+          <img src={Enum.at(@card_image, 0).src} class={Map.get(Enum.at(@card_image, 0), :class, "")} />
+        </div>
+        <hr class="mb-2" />
+      <% end %>
       <%= if @card_title !== [] do %>
         <h1 class="text-2xl font-bold mb-4">{render_slot(@card_title)}</h1>
       <% end %>
       {render_slot(@inner_block)}
     </div>
+    """
+  end
+
+  attr :id, :string, required: true
+  attr :active_tab, :string, required: true
+
+  slot :tab, required: true do
+    attr :name, :string, required: true
+    attr :action, JS
+  end
+
+  def tab_bar(assigns) do
+    ~H"""
+    <ul class="flex items-center justify-between">
+      <li
+        :for={{tab, _idx} <- Enum.with_index(@tab)}
+        class={"flex justify-center items-center w-full h-12 cursor-pointer #{if tab.name === @active_tab, do: "border-b-[2px] border-b-primary", else: ""}"}
+        id={tab.name}
+        phx-hook="RippleEffect"
+        phx-click={Map.get(tab, :action, %JS{})}
+      >
+        {render_slot(tab)}
+      </li>
+    </ul>
     """
   end
 

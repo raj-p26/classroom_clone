@@ -4,7 +4,7 @@ defmodule ClassroomCloneWeb.Navbar do
   @impl true
   def render(assigns) do
     ~H"""
-    <nav class="flex items-center justify-between fixed top-0 left-0 right-0 h-[80px] border-b border-b-outline/80 px-6 bg-surface dark:bg-surface-dark text-on-surface dark:text-on-surface-dark z-[100]">
+    <nav class="flex items-center justify-between fixed top-0 left-0 right-0 h-[80px] border-b border-b-outline/80 px-6 bg-surface dark:bg-surface-dark text-on-surface dark:text-on-surface-dark z-[49]">
       <div>
         <.link patch={~p"/dashboard"} class="text-2xl flex items-center gap-2">
           <img src="/images/Google_Classroom_Logo.png" class="h-8" /> Classroom Clone
@@ -15,7 +15,13 @@ defmodule ClassroomCloneWeb.Navbar do
           <img src={@user.avatar} class="rounded-full h-10" title={@user.email} />
         </li>
         <li>
-          <button class="text-button" id="theme-toggle-button" phx-hook="RippleEffect" phx-click="toggle-theme" phx-target={@myself}>
+          <button
+            class="text-button"
+            id="theme-toggle-button"
+            phx-hook="RippleEffect"
+            phx-click="toggle-theme"
+            phx-target={@myself}
+          >
             Light/Dark
           </button>
         </li>
@@ -34,7 +40,6 @@ defmodule ClassroomCloneWeb.Navbar do
 
   @impl true
   def handle_event("toggle-theme", _params, socket) do
-
     {:noreply, push_event(socket, "toggle-theme", %{})}
   end
 end

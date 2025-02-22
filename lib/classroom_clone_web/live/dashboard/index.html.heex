@@ -2,20 +2,23 @@
 
 <div class="flex gap-4">
   <div :for={class <- @owned_classes} class="relative">
-    <.card type="outlined-card" id="sample-card" on_click={JS.patch(~p"/c/#{class.id}")} clickable>
+    <.card
+      type="outlined-card"
+      id={"card-#{class.id}"}
+      on_click={JS.patch(~p"/c/#{class.id}")}
+      clickable
+    >
       <:card_title>{class.name}</:card_title>
       <p>{class.subject}</p>
-      <p>{class.owner}</p>
+      <p class="text-xs">{class.owner}</p>
     </.card>
   </div>
   <div :for={class <- @enrolled_classes}>
     <.card id={"card-#{class.id}"} on_click={JS.patch(~p"/c/#{class.id}")} clickable>
       <:card_title>{class.name}</:card_title>
+      <:card_image src={class.owner_avatar} class="rounded-full h-[4rem]" />
       <p>{class.subject}</p>
-      <p>{class.owner}</p>
-      <div class="mt-2">
-        <img src={class.owner_avatar} class="rounded-full block w-fit ml-auto" />
-      </div>
+      <p class="text-xs">{class.owner}</p>
     </.card>
   </div>
 </div>
