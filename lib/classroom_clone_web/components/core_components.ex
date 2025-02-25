@@ -655,10 +655,10 @@ defmodule ClassroomCloneWeb.CoreComponents do
   end
 
   attr :id, :string, required: true
-  attr :active_tab, :string, required: true
+  attr :active_tab, :atom, required: true
 
   slot :tab, required: true do
-    attr :name, :string, required: true
+    attr :name, :atom, required: true
     attr :action, JS
   end
 

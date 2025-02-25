@@ -1,10 +1,14 @@
-<h1>This is class</h1>
-
-<%!-- TODO: Tab Bar --%>
-<.tab_bar id="primary-tab" active_tab={@current_tab}>
-  <:tab name="tab-1" action={JS.patch(~p"/c/#{@class_id}?tab=tab-1")}>Tab 1</:tab>
-  <:tab name="tab-2" action={JS.patch(~p"/c/#{@class_id}?tab=tab-2")}>Tab 2</:tab>
-  <:tab name="tab-3" action={JS.patch(~p"/c/#{@class_id}?tab=tab-3")}>Tab 3</:tab>
-  <:tab name="tab-4" action={JS.patch(~p"/c/#{@class_id}?tab=tab-4")}>Tab 4</:tab>
-  <:tab name="tab-5" action={JS.patch(~p"/c/#{@class_id}?tab=tab-5")}>Tab 5</:tab>
+<.tab_bar id="primary-tab" active_tab={@live_action}>
+  <:tab name={:stream} action={JS.patch(~p"/c/#{@class_id}/")}>Stream</:tab>
+  <:tab name={:people} action={JS.patch(~p"/c/#{@class_id}/people")}>People</:tab>
+  <:tab name={:grades} action={JS.patch(~p"/c/#{@class_id}/grades")}>Grades</:tab>
 </.tab_bar>
+
+<%= case @live_action do %>
+  <% :stream -> %>
+    <h1 class="text-2xl">Streaming result...</h1>
+  <% :people -> %>
+    <h1 class="text-2xl">Showing People...</h1>
+  <% :grades -> %>
+    <h1 class="text-2xl">Showing Grades...</h1>
+<% end %>

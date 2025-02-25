@@ -17,7 +17,7 @@ export const RippleEffect = {
       ripple.style.height = `${size}px`;
       ripple.style.top = `${y}px`;
       ripple.style.left = `${x}px`;
-      ripple.style.animation = "animate-ripple 0.5s ease";
+      ripple.style.animation = "animate-ripple 0.7s ease";
 
       this.el.appendChild(ripple);
 

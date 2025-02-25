@@ -32,7 +32,9 @@ defmodule ClassroomCloneWeb.Router do
     live "/join", Dashboard.Index, :join
     live "/create", Dashboard.Index, :create
 
-    live "/c/:id", Class.Index
+    live "/c/:id", Class.Index, :stream
+    live "/c/:id/people", Class.Index, :people
+    live "/c/:id/grades", Class.Index, :grades
   end
 
   scope "/auth", ClassroomCloneWeb do

@@ -1,8 +1,6 @@
 defmodule ClassroomCloneWeb.Class.Index do
   use ClassroomCloneWeb, :live_view
 
-  embed_templates "tabs/*"
-
   @impl true
   def mount(params, %{"user" => user}, socket) do
     socket =
@@ -15,7 +13,5 @@ defmodule ClassroomCloneWeb.Class.Index do
   end
 
   @impl true
-  def handle_params(%{"tab" => tab}, _uri, socket) do
-    {:noreply, assign(socket, :current_tab, tab)}
-  end
+  def handle_params(_params, _uri, socket), do: {:noreply, socket}
 end
