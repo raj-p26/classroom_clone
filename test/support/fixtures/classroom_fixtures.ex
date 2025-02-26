@@ -32,4 +32,18 @@ defmodule ClassroomClone.ClassroomFixtures do
 
     enrollment
   end
+
+  @doc """
+  Generate a announcement.
+  """
+  def announcement_fixture(attrs \\ %{}) do
+    {:ok, announcement} =
+      attrs
+      |> Enum.into(%{
+        content: "some content"
+      })
+      |> ClassroomClone.Classroom.create_announcement()
+
+    announcement
+  end
 end

@@ -1,14 +1,45 @@
 <.tab_bar id="primary-tab" active_tab={@live_action}>
-  <:tab name={:stream} action={JS.patch(~p"/c/#{@class_id}/")}>Stream</:tab>
-  <:tab name={:people} action={JS.patch(~p"/c/#{@class_id}/people")}>People</:tab>
-  <:tab name={:grades} action={JS.patch(~p"/c/#{@class_id}/grades")}>Grades</:tab>
+  <:tab name={:stream} action={JS.patch(~p"/c/#{@class.id}/")}>Stream</:tab>
+  <:tab name={:people} action={JS.patch(~p"/c/#{@class.id}/people")}>People</:tab>
+  <:tab name={:grades} action={JS.patch(~p"/c/#{@class.id}/grades")}>Grades</:tab>
 </.tab_bar>
 
-<%= case @live_action do %>
-  <% :stream -> %>
-    <h1 class="text-2xl">Streaming result...</h1>
-  <% :people -> %>
-    <h1 class="text-2xl">Showing People...</h1>
-  <% :grades -> %>
-    <h1 class="text-2xl">Showing Grades...</h1>
-<% end %>
+<div class="px-10 my-4">
+  <%= case @live_action do %>
+    <% :stream -> %>
+      <div class="flex gap-4">
+        <.card :if={@class.user_id === @user.id} id="class-code-card">
+          <:card_title>Class Code</:card_title>
+          <h1 class="text-xl font-bold text-primary dark:text-primary-dark">{@class.id}</h1>
+        </.card>
+        <div class="w-[75%]">
+          <div class="flex items-center">
+            <img src={@user.avatar} class="size-10 rounded-full mr-4" />
+            <.live_component
+              module={AnnouncementComponent}
+              id="announcement-component"
+              user_id={@user.id}
+              class_id={@class.id}
+            />
+          </div>
+
+          <hr class="bg-outline-variant dark:bg-outline-variant-dark m-6" />
+
+          <div>
+            <p :for={announcement <- @announcements}>
+              <.show_announcement {announcement} />
+            </p>
+          </div>
+        </div>
+      </div>
+    <% :people -> %>
+      <.list_view id="people-list">
+        <:item :for={enrollment <- @enrollments}>
+          <img src={enrollment.user.avatar} class="size-10 rounded-full mr-4" />
+          {enrollment.user.email}
+        </:item>
+      </.list_view>
+    <% :grades -> %>
+      <h1 class="text-2xl">Showing Grades...</h1>
+  <% end %>
+</div>

@@ -4,10 +4,6 @@
 
 /* This file is for your main application CSS */
 
-* {
-  @apply transition;
-}
-
 button,
 a {
   @apply rounded-[20px] px-4 h-[40px] flex items-center justify-center w-fit;
@@ -36,7 +32,7 @@ a {
 /* Card Styles */
 
 .base-card {
-  @apply rounded-[12px] p-4 cursor-pointer;
+  @apply rounded-[12px] p-4 cursor-pointer h-fit;
 }
 
 .elevated-card {

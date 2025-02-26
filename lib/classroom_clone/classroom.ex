@@ -38,6 +38,11 @@ defmodule ClassroomClone.Classroom do
   """
   def get_class!(id), do: Repo.get!(Class, id)
 
+  def get_class(id) do
+    Repo.get(Class, id)
+    |> Repo.preload(:user)
+  end
+
   @doc """
   Creates a class.
 
@@ -116,6 +121,13 @@ defmodule ClassroomClone.Classroom do
   """
   def list_enrollments do
     Repo.all(Enrollment)
+  end
+
+  def list_class_enrollments(class_id) do
+    Enrollment
+    |> where([e], e.class_id == ^class_id)
+    |> Repo.all()
+    |> Repo.preload(:user)
   end
 
   @doc """
@@ -262,5 +274,115 @@ defmodule ClassroomClone.Classroom do
     rescue
       e -> {:error, Exception.message(e)}
     end
+  end
+
+  alias ClassroomClone.Classroom.Announcement
+
+  @doc """
+  Returns the list of announcements.
+
+  ## Examples
+
+      iex> list_announcements()
+      [%Announcement{}, ...]
+
+  """
+  def list_announcements do
+    Repo.all(Announcement)
+  end
+
+  @doc """
+  Gets a single announcement.
+
+  Raises `Ecto.NoResultsError` if the Announcement does not exist.
+
+  ## Examples
+
+      iex> get_announcement!(123)
+      %Announcement{}
+
+      iex> get_announcement!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_announcement!(id), do: Repo.get!(Announcement, id)
+
+  @doc """
+  Creates a announcement.
+
+  ## Examples
+
+      iex> create_announcement(%{field: value})
+      {:ok, %Announcement{}}
+
+      iex> create_announcement(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_announcement(attrs \\ %{}) do
+    %Announcement{}
+    |> Announcement.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a announcement.
+
+  ## Examples
+
+      iex> update_announcement(announcement, %{field: new_value})
+      {:ok, %Announcement{}}
+
+      iex> update_announcement(announcement, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_announcement(%Announcement{} = announcement, attrs) do
+    announcement
+    |> Announcement.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a announcement.
+
+  ## Examples
+
+      iex> delete_announcement(announcement)
+      {:ok, %Announcement{}}
+
+      iex> delete_announcement(announcement)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_announcement(%Announcement{} = announcement) do
+    Repo.delete(announcement)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking announcement changes.
+
+  ## Examples
+
+      iex> change_announcement(announcement)
+      %Ecto.Changeset{data: %Announcement{}}
+
+  """
+  def change_announcement(%Announcement{} = announcement, attrs \\ %{}) do
+    Announcement.changeset(announcement, attrs)
+  end
+
+  def announcements_by_class_id(class_id) do
+    Announcement
+    |> where([a], a.class_id == ^class_id)
+    |> join(:inner, [a], u in User, on: a.user_id == u.id)
+    |> select([a, u], %{
+      announcer_avatar: u.avatar,
+      announcer_name: u.username,
+      announced_at: a.inserted_at,
+      # announced_at: Calendar.strftime(a.inserted_at, "%B %d, %Y"),
+      content: a.content
+    })
+    |> Repo.all()
   end
 end

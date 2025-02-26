@@ -664,15 +664,33 @@ defmodule ClassroomCloneWeb.CoreComponents do
 
   def tab_bar(assigns) do
     ~H"""
-    <ul class="flex items-center justify-between">
+    <ul class="flex items-center justify-between sticky top-[80px] bg-surface dark:bg-surface-dark z-50">
       <li
         :for={{tab, _idx} <- Enum.with_index(@tab)}
-        class={"flex justify-center items-center w-full h-12 cursor-pointer #{if tab.name === @active_tab, do: "border-b-[2px] border-b-primary", else: ""}"}
+        class={"flex justify-center items-center w-full h-12 cursor-pointer #{if tab.name === @active_tab, do: "border-b-[3px] border-b-primary dark:border-b-primary-dark", else: "border-b border-b-outline dark:boder-b-outline-dark"} hover:bg-white/10"}
         id={tab.name}
         phx-hook="RippleEffect"
         phx-click={Map.get(tab, :action, %JS{})}
       >
         {render_slot(tab)}
+      </li>
+    </ul>
+    """
+  end
+
+  attr :id, :string, required: true
+  slot :item, required: false
+
+  def list_view(assigns) do
+    ~H"""
+    <ul class="py-2 bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark">
+      <li
+        :for={{it, idx} <- Enum.with_index(@item)}
+        class="bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark h-[72px] hover:cursor-pointer px-4 flex items-center"
+        id={"#{@id}-item-#{idx}"}
+        phx-hook="RippleEffect"
+      >
+        {render_slot(it)}
       </li>
     </ul>
     """

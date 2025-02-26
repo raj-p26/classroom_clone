@@ -110,4 +110,58 @@ defmodule ClassroomClone.ClassroomTest do
       assert %Ecto.Changeset{} = Classroom.change_enrollment(enrollment)
     end
   end
+
+  describe "announcements" do
+    alias ClassroomClone.Classroom.Announcement
+
+    import ClassroomClone.ClassroomFixtures
+
+    @invalid_attrs %{content: nil}
+
+    test "list_announcements/0 returns all announcements" do
+      announcement = announcement_fixture()
+      assert Classroom.list_announcements() == [announcement]
+    end
+
+    test "get_announcement!/1 returns the announcement with given id" do
+      announcement = announcement_fixture()
+      assert Classroom.get_announcement!(announcement.id) == announcement
+    end
+
+    test "create_announcement/1 with valid data creates a announcement" do
+      valid_attrs = %{content: "some content"}
+
+      assert {:ok, %Announcement{} = announcement} = Classroom.create_announcement(valid_attrs)
+      assert announcement.content == "some content"
+    end
+
+    test "create_announcement/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Classroom.create_announcement(@invalid_attrs)
+    end
+
+    test "update_announcement/2 with valid data updates the announcement" do
+      announcement = announcement_fixture()
+      update_attrs = %{content: "some updated content"}
+
+      assert {:ok, %Announcement{} = announcement} = Classroom.update_announcement(announcement, update_attrs)
+      assert announcement.content == "some updated content"
+    end
+
+    test "update_announcement/2 with invalid data returns error changeset" do
+      announcement = announcement_fixture()
+      assert {:error, %Ecto.Changeset{}} = Classroom.update_announcement(announcement, @invalid_attrs)
+      assert announcement == Classroom.get_announcement!(announcement.id)
+    end
+
+    test "delete_announcement/1 deletes the announcement" do
+      announcement = announcement_fixture()
+      assert {:ok, %Announcement{}} = Classroom.delete_announcement(announcement)
+      assert_raise Ecto.NoResultsError, fn -> Classroom.get_announcement!(announcement.id) end
+    end
+
+    test "change_announcement/1 returns a announcement changeset" do
+      announcement = announcement_fixture()
+      assert %Ecto.Changeset{} = Classroom.change_announcement(announcement)
+    end
+  end
 end
