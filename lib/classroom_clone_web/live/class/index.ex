@@ -1,15 +1,23 @@
 defmodule ClassroomCloneWeb.Class.Index do
+  alias ClassroomClone.Accounts
+  alias ClassroomCloneWeb.Endpoint
   alias ClassroomCloneWeb.Class.AnnouncementComponent
   alias ClassroomClone.Classroom
+
   use ClassroomCloneWeb, :live_view
+
+  @announcements_topic "announcements"
 
   @impl true
   def mount(params, %{"user" => user}, socket) do
+    if connected?(socket) do
+      Endpoint.subscribe(@announcements_topic)
+    end
+
     socket =
       socket
       |> assign(:user, user)
       |> assign_class(params["id"])
-      |> assign(:current_tab, "tab-1")
       |> assign_enrollments
       |> assign_live_title
       |> assign_announcements
@@ -47,11 +55,22 @@ defmodule ClassroomCloneWeb.Class.Index do
   def handle_params(_params, _uri, socket), do: {:noreply, socket}
 
   @impl true
-  def handle_info({AnnouncementComponent, announcement_id}, %{assigns: assigns} = socket) do
+  def handle_info(
+        %{event: "announcement_created", payload: announcement_id},
+        socket
+      ) do
+    assigns = socket.assigns
     announcement = Classroom.announcement_by_id(announcement_id)
     announcements = [announcement | assigns.announcements]
 
     {:noreply, assign(socket, :announcements, announcements)}
+  end
+
+  def handle_info(%{event: "enrolled", payload: user_id}, socket) do
+    enrollments = socket.assigns.enrollments
+    user = Accounts.get_user_details(user_id)
+
+    {:noreply, assign(socket, :enrollments, enrollments ++ [user])}
   end
 
   defp show_announcement(assigns) do

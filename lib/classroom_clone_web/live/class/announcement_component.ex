@@ -1,7 +1,11 @@
 defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
   alias ClassroomClone.Classroom
   alias ClassroomClone.Classroom.Announcement
+  alias ClassroomCloneWeb.Endpoint
+
   use ClassroomCloneWeb, :live_component
+
+  @announcements_topic "announcements"
 
   @impl true
   def render(assigns) do
@@ -45,7 +49,8 @@ defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
 
     case Classroom.create_announcement(announcement_params) do
       {:ok, announcement} ->
-        notify_parent(announcement.id)
+        # notify_parent(announcement.id)
+        Endpoint.broadcast(@announcements_topic, "announcement_created", announcement.id)
 
         {:noreply, put_flash(socket, :info, "Announcement created")}
 
@@ -53,6 +58,4 @@ defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
         {:noreply, assign(socket, :announcement, to_form(changeset))}
     end
   end
-
-  defp notify_parent(info), do: send(self(), {__MODULE__, info})
 end

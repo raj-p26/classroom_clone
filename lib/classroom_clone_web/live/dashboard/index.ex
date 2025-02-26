@@ -2,9 +2,16 @@ defmodule ClassroomCloneWeb.Dashboard.Index do
   alias ClassroomClone.Classroom.Class
   alias ClassroomCloneWeb.Dashboard.CreateClassComponent
   alias ClassroomClone.Classroom
+  alias ClassroomCloneWeb.Endpoint
   use ClassroomCloneWeb, :live_view
 
+  @enrollment_topic "enrollment"
+
   def mount(_params, %{"user" => user}, socket) do
+    if connected?(socket) do
+      Endpoint.subscribe(@enrollment_topic)
+    end
+
     socket =
       socket
       |> assign(:user, user)
@@ -38,17 +45,14 @@ defmodule ClassroomCloneWeb.Dashboard.Index do
 
   def handle_event("join", %{"class_code" => class_code}, socket) do
     class = Classroom.get_class_by_join_code(class_code)
+    user = socket.assigns.user
 
     if class == nil, do: throw("No Class Found")
 
     socket =
-      case Classroom.check_if_user_exists(class_code, socket.assigns.user.id) do
-        {:ok, _} ->
-          Classroom.create_enrollment(%{class_id: class_code, user_id: socket.assigns.user.id})
-          put_flash(socket, :info, "Joining Class")
-
-        {:error, err} ->
-          put_flash(socket, :error, err)
+      case Classroom.check_if_user_exists(class_code, user.id) do
+        {:ok, _} -> enroll(%{class_id: class.id, user_id: user.id}, socket)
+        {:error, err} -> put_flash(socket, :error, err)
       end
 
     {:noreply, push_patch(socket, to: ~p"/dashboard")}
@@ -60,6 +64,24 @@ defmodule ClassroomCloneWeb.Dashboard.Index do
         |> push_patch(to: ~p"/dashboard")
 
       {:noreply, socket}
+  end
+
+  defp enroll(enrollment_params, socket) do
+    enrollments = socket.assigns.enrolled_classes
+
+    case Classroom.create_enrollment(enrollment_params) do
+      {:ok, new_enrollment} ->
+        enrollment = Classroom.get_enrollment(new_enrollment.id)
+        enrollments = [enrollment | enrollments]
+        Endpoint.broadcast(@enrollment_topic, "enrolled", enrollment.user_id)
+
+        socket
+        |> assign(:enrolled_classes, enrollments)
+        |> put_flash(:info, "Joined Class")
+
+      {:error, err} ->
+        put_flash(socket, :error, err)
+    end
   end
 
   def handle_info(msg, %{assigns: assigns} = socket) do

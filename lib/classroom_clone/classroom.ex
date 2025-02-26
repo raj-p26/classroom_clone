@@ -150,6 +150,21 @@ defmodule ClassroomClone.Classroom do
   """
   def get_enrollment!(id), do: Repo.get!(Enrollment, id)
 
+  def get_enrollment(id) do
+    Enrollment
+    |> where([e], e.id == ^id)
+    |> join(:left, [e], c in Class, on: c.id == e.class_id)
+    |> join(:inner, [e, c], u in User, on: c.user_id == u.id)
+    |> select([e, c, u], %{
+      id: c.id,
+      owner: u.username,
+      name: c.name,
+      subject: c.subject,
+      owner_avatar: u.avatar
+    })
+    |> Repo.one()
+  end
+
   @doc """
   Creates a enrollment.
 
@@ -231,6 +246,7 @@ defmodule ClassroomClone.Classroom do
   def enrollments_by_user(user_id) do
     Enrollment
     |> where([e], e.user_id == ^user_id)
+    |> order_by([e], desc: e.inserted_at)
     |> Repo.all()
   end
 

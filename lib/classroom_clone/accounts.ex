@@ -118,4 +118,15 @@ defmodule ClassroomClone.Accounts do
   def get_user_by_google_id(google_id) do
     Repo.get_by(User, google_id: google_id)
   end
+
+  def get_user_details(id) do
+    User
+    |> where([u], u.id == ^id)
+    |> select([u], %{
+      id: u.id,
+      user_avatar: u.avatar,
+      username: u.username
+    })
+    |> Repo.one()
+  end
 end
