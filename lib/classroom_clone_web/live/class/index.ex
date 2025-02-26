@@ -40,20 +40,28 @@ defmodule ClassroomCloneWeb.Class.Index do
 
     announcements = Classroom.announcements_by_class_id(class_id)
 
-    assign_new(socket, :announcements, fn -> announcements end)
+    assign(socket, :announcements, announcements)
   end
 
   @impl true
   def handle_params(_params, _uri, socket), do: {:noreply, socket}
 
+  @impl true
+  def handle_info({AnnouncementComponent, announcement_id}, %{assigns: assigns} = socket) do
+    announcement = Classroom.announcement_by_id(announcement_id)
+    announcements = [announcement | assigns.announcements]
+
+    {:noreply, assign(socket, :announcements, announcements)}
+  end
+
   defp show_announcement(assigns) do
     ~H"""
     <div class="border border-outline dark:border-outline-dark rounded-lg p-4 my-2">
       <div class="flex items-center gap-4">
-        <img src={@announcer_avatar} class="size-10 rounded-full" />
+        <img src={@announcer_avatar} class="size-10 rounded-full" aria-hidden="true" />
         <div>
           <p class="text-lg">{@announcer_name}</p>
-          <p class="text-sm font-light">{Calendar.strftime(@announced_at, "%B %d, %Y")}</p>
+          <p class="text-sm font-light">{Calendar.strftime(@announced_at, "%B %d, %Y [%I:%M %p]")}</p>
         </div>
       </div>
       <p class="mt-2">{@content}</p>

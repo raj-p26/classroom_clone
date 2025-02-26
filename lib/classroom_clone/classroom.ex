@@ -40,7 +40,6 @@ defmodule ClassroomClone.Classroom do
 
   def get_class(id) do
     Repo.get(Class, id)
-    |> Repo.preload(:user)
   end
 
   @doc """
@@ -126,8 +125,13 @@ defmodule ClassroomClone.Classroom do
   def list_class_enrollments(class_id) do
     Enrollment
     |> where([e], e.class_id == ^class_id)
+    |> join(:inner, [e], u in User, on: e.user_id == u.id)
+    |> select([e, u], %{
+      id: e.id,
+      user_avatar: u.avatar,
+      username: u.username
+    })
     |> Repo.all()
-    |> Repo.preload(:user)
   end
 
   @doc """
@@ -377,12 +381,27 @@ defmodule ClassroomClone.Classroom do
     |> where([a], a.class_id == ^class_id)
     |> join(:inner, [a], u in User, on: a.user_id == u.id)
     |> select([a, u], %{
+      id: a.id,
       announcer_avatar: u.avatar,
       announcer_name: u.username,
       announced_at: a.inserted_at,
-      # announced_at: Calendar.strftime(a.inserted_at, "%B %d, %Y"),
       content: a.content
     })
+    |> order_by([a, u], desc: a.inserted_at)
     |> Repo.all()
+  end
+
+  def announcement_by_id(id) do
+    Announcement
+    |> where([a], a.id == ^id)
+    |> join(:inner, [a], u in User, on: a.user_id == u.id)
+    |> select([a, u], %{
+      id: a.id,
+      announcer_avatar: u.avatar,
+      announcer_name: u.username,
+      announced_at: a.inserted_at,
+      content: a.content
+    })
+    |> Repo.one()
   end
 end

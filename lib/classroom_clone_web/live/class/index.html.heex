@@ -1,3 +1,5 @@
+<.flash_group flash={@flash} />
+
 <.tab_bar id="primary-tab" active_tab={@live_action}>
   <:tab name={:stream} action={JS.patch(~p"/c/#{@class.id}/")}>Stream</:tab>
   <:tab name={:people} action={JS.patch(~p"/c/#{@class.id}/people")}>People</:tab>
@@ -7,8 +9,8 @@
 <div class="px-10 my-4">
   <%= case @live_action do %>
     <% :stream -> %>
-      <div class="flex gap-4">
-        <.card :if={@class.user_id === @user.id} id="class-code-card">
+      <div class="flex gap-4 relative">
+        <.card :if={@class.user_id === @user.id} id="class-code-card" class="sticky top-[150px]">
           <:card_title>Class Code</:card_title>
           <h1 class="text-xl font-bold text-primary dark:text-primary-dark">{@class.id}</h1>
         </.card>
@@ -35,8 +37,8 @@
     <% :people -> %>
       <.list_view id="people-list">
         <:item :for={enrollment <- @enrollments}>
-          <img src={enrollment.user.avatar} class="size-10 rounded-full mr-4" />
-          {enrollment.user.email}
+          <img src={enrollment.user_avatar} class="size-10 rounded-full mr-4" />
+          {enrollment.username}
         </:item>
       </.list_view>
     <% :grades -> %>

@@ -44,11 +44,15 @@ defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
     }
 
     case Classroom.create_announcement(announcement_params) do
-      {:ok, _announcement} ->
+      {:ok, announcement} ->
+        notify_parent(announcement.id)
+
         {:noreply, put_flash(socket, :info, "Announcement created")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :announcement, to_form(changeset))}
     end
   end
+
+  defp notify_parent(info), do: send(self(), {__MODULE__, info})
 end
