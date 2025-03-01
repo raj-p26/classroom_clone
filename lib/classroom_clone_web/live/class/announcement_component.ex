@@ -1,4 +1,5 @@
 defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
+  alias ClassroomClone.Uploads
   alias ClassroomClone.Classroom
   alias ClassroomClone.Classroom.Announcement
   alias ClassroomCloneWeb.Endpoint
@@ -11,15 +12,29 @@ defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
   def render(assigns) do
     ~H"""
     <div class="w-full">
-      <.simple_form for={@announcement} phx-submit="submit-announcement" phx-target={@myself}>
-        <.input
-          value=""
-          placeholder="Announce something to your class"
-          name="content"
-          field={@announcement[:content]}
-        />
-        <button class="filled-button">Post</button>
+      <.header>Announce something to your class</.header>
+      <.simple_form
+        for={@announcement}
+        phx-submit="submit-announcement"
+        phx-change="validate"
+        phx-target={@myself}
+      >
+        <.input value="" placeholder="Announcement" name="content" field={@announcement[:content]} />
+        <div
+          phx-drop-target={@uploads.announcement_docs.ref}
+          class="border border-dashed rounded-xl py-20"
+        >
+          <p class="w-fit mx-auto">Drop files here or</p>
+          <.live_file_input upload={@uploads.announcement_docs} class="block mx-auto" />
+        </div>
+        <button class="filled-button ml-auto">Post</button>
       </.simple_form>
+      <p :for={err <- upload_errors(@uploads.announcement_docs)} class="text-error">
+        {error_to_string(err)}
+      </p>
+      <div :for={entry <- @uploads.announcement_docs.entries}>
+        {entry.client_name}
+      </div>
     </div>
     """
   end
@@ -32,8 +47,18 @@ defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
       socket
       |> assign(assigns)
       |> assign_new(:announcement, fn -> to_form(announcement) end)
+      |> allow_upload(:announcement_docs,
+        accept: ~w(.jpg .mp4 .png .jpeg),
+        max_entries: 5
+      )
 
     {:ok, socket}
+  end
+
+  @impl true
+  def handle_event("validate", _params, socket) do
+    IO.inspect(upload_errors(socket.assigns.uploads.announcement_docs))
+    {:noreply, socket}
   end
 
   @impl true
@@ -47,15 +72,41 @@ defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
       "class_id" => class_id
     }
 
-    case Classroom.create_announcement(announcement_params) do
-      {:ok, announcement} ->
-        # notify_parent(announcement.id)
-        Endpoint.broadcast(@announcements_topic, "announcement_created", announcement.id)
+    result = Classroom.create_announcement(announcement_params)
 
-        {:noreply, put_flash(socket, :info, "Announcement created")}
-
-      {:error, changeset} ->
-        {:noreply, assign(socket, :announcement, to_form(changeset))}
-    end
+    create_announcement_handler(result, socket)
   end
+
+  defp create_announcement_handler({:ok, announcement}, socket) do
+    _ =
+      consume_uploaded_entries(socket, :announcement_docs, fn %{path: path}, entry ->
+        if !File.dir?(Path.join("priv/static/uploads/announcements", "#{announcement.id}")) do
+          File.mkdir(Path.join("priv/static/uploads/announcements", "#{announcement.id}"))
+        end
+
+        file_destination =
+          Path.join("priv/static/uploads/announcements/#{announcement.id}", entry.client_name)
+
+        announcement_doc_attr = %{
+          "announcement_id" => announcement.id,
+          "file_path" => "#{announcement.id}/#{entry.client_name}"
+        }
+
+        Uploads.create_announcement_doc(announcement_doc_attr)
+
+        File.cp!(path, file_destination)
+        {:ok, file_destination}
+      end)
+
+    Endpoint.broadcast(@announcements_topic, "announcement_created", announcement.id)
+    {:noreply, socket}
+  end
+
+  defp create_announcement_handler({:error, changeset}, socket) do
+    {:noreply, assign(socket, :announcement, to_form(changeset))}
+  end
+
+  defp error_to_string(:too_large), do: "Too large"
+  defp error_to_string(:not_accepted), do: "You have selected an unacceptable file type"
+  defp error_to_string(:too_many_files), do: "You have selected too many files"
 end

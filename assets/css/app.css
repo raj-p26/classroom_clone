@@ -68,3 +68,21 @@ a {
 .text-button {
   @apply text-primary dark:text-primary-dark hover:bg-surface-container/50 dark:hover:bg-surface-container-dark/50;
 }
+
+/* Floating Action Button styles */
+
+.base-fab {
+  @apply z-50 px-6 py-9 shadow-lg hover:shadow-xl;
+}
+
+.primary-fab {
+  @apply base-fab bg-primary-container dark:bg-primary-container-dark text-on-primary-container dark:text-on-primary-container-dark;
+}
+
+.secondary-fab {
+  @apply base-fab bg-secondary-container dark:bg-secondary-container-dark text-on-secondary-container dark:text-on-secondary-container-dark;
+}
+
+.tertiary-fab {
+  @apply base-fab bg-tertiary-container dark:bg-tertiary-container-dark text-on-tertiary-container dark:text-on-tertiary-container-dark;
+}

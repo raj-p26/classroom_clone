@@ -21,6 +21,7 @@ defmodule ClassroomCloneWeb.Class.Index do
       |> assign_enrollments
       |> assign_live_title
       |> assign_announcements
+      |> assign(:make_announcement, false)
 
     {:ok, socket}
   end
@@ -55,15 +56,27 @@ defmodule ClassroomCloneWeb.Class.Index do
   def handle_params(_params, _uri, socket), do: {:noreply, socket}
 
   @impl true
+  def handle_event("close-announcement-modal", _params, socket) do
+    socket = update(socket, :make_announcement, fn _prev_state -> false end)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("open-announcement-modal", _params, socket) do
+    socket = update(socket, :make_announcement, fn _prev_state -> true end)
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info(
         %{event: "announcement_created", payload: announcement_id},
         socket
       ) do
-    assigns = socket.assigns
     announcement = Classroom.announcement_by_id(announcement_id)
-    announcements = [announcement | assigns.announcements]
 
-    {:noreply, assign(socket, :announcements, announcements)}
+    socket = update(socket, :make_announcement, fn _prev_state -> false end)
+
+    {:noreply, update(socket, :announcements, &[announcement | &1])}
   end
 
   def handle_info(%{event: "enrolled", payload: user_id}, socket) do
@@ -75,7 +88,7 @@ defmodule ClassroomCloneWeb.Class.Index do
 
   defp show_announcement(assigns) do
     ~H"""
-    <div class="border border-outline dark:border-outline-dark rounded-lg p-4 my-2">
+    <div class="border border-outline/30 dark:border-outline-dark/30 rounded-lg p-4 my-2">
       <div class="flex items-center gap-4">
         <img src={@announcer_avatar} class="size-10 rounded-full" aria-hidden="true" />
         <div>
