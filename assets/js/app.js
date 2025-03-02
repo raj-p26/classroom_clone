@@ -21,9 +21,9 @@ import "phoenix_html";
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
-import { RippleEffect, ModalHook } from "./hooks";
+import { RippleEffect } from "./hooks";
 
-const hooks = { RippleEffect, ModalHook };
+const hooks = { RippleEffect };
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -34,8 +34,17 @@ let liveSocket = new LiveSocket("/live", Socket, {
   hooks,
 });
 
+// function isDarkTheme() {
+//   const theme = document.querySelector("html");
+
+//   console.log(theme.classList.contains("dark"));
+//   return theme.classList.contains("dark");
+// }
+
 // Show progress bar on live navigation and form submits
-topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
+topbar.config({
+  shadowColor: "rgba(0, 0, 0, .3)",
+});
 window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 

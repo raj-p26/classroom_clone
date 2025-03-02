@@ -101,4 +101,11 @@ defmodule ClassroomClone.Uploads do
   def change_announcement_doc(%AnnouncementDoc{} = announcement_doc, attrs \\ %{}) do
     AnnouncementDoc.changeset(announcement_doc, attrs)
   end
+
+  def get_announcement_docs_count(announcement_id) do
+    AnnouncementDoc
+    |> where([a], a.announcement_id == ^announcement_id)
+    |> select([a], count("*"))
+    |> Repo.one()
+  end
 end

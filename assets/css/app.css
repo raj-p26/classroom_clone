@@ -4,11 +4,6 @@
 
 /* This file is for your main application CSS */
 
-button,
-a {
-  @apply rounded-[20px] px-4 h-[40px] flex items-center justify-center w-fit;
-}
-
 .ripple {
   @apply absolute rounded-full pointer-events-none bg-black/30 dark:bg-white/30;
 }
@@ -49,30 +44,34 @@ a {
 
 /* Button Styles */
 
+.base-button {
+  @apply rounded-[20px] px-4 h-[40px] flex items-center justify-center w-fit;
+}
+
 .elevated-button {
-  @apply shadow bg-surface-container-low dark:bg-surface-container-low-dark text-primary dark:text-primary-dark hover:shadow-lg;
+  @apply base-button shadow bg-surface-container-low dark:bg-surface-container-low-dark text-primary dark:text-primary-dark hover:shadow-lg;
 }
 
 .filled-button {
-  @apply bg-primary dark:bg-primary-dark text-on-primary dark:text-on-primary-dark hover:shadow;
+  @apply base-button bg-primary dark:bg-primary-dark text-on-primary dark:text-on-primary-dark hover:shadow;
 }
 
 .filled-tonal-button {
-  @apply bg-secondary-container dark:bg-secondary-container-dark text-on-secondary-container dark:text-on-secondary-container-dark hover:shadow;
+  @apply base-button bg-secondary-container dark:bg-secondary-container-dark text-on-secondary-container dark:text-on-secondary-container-dark hover:shadow;
 }
 
 .outlined-button {
-  @apply border border-outline dark:border-outline-dark text-primary dark:text-primary-dark;
+  @apply base-button border border-outline dark:border-outline-dark text-primary dark:text-primary-dark;
 }
 
 .text-button {
-  @apply text-primary dark:text-primary-dark hover:bg-surface-container/50 dark:hover:bg-surface-container-dark/50;
+  @apply base-button text-primary dark:text-primary-dark hover:bg-surface-container/50 dark:hover:bg-surface-container-dark/50;
 }
 
 /* Floating Action Button styles */
 
 .base-fab {
-  @apply z-50 px-6 py-9 shadow-lg hover:shadow-xl;
+  @apply z-50 px-6 py-9 rounded-[20px] h-[40px] shadow-lg hover:shadow-xl flex items-center justify-center w-fit;
 }
 
 .primary-fab {

@@ -24,8 +24,16 @@ defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
           phx-drop-target={@uploads.announcement_docs.ref}
           class="border border-dashed rounded-xl py-20"
         >
-          <p class="w-fit mx-auto">Drop files here or</p>
-          <.live_file_input upload={@uploads.announcement_docs} class="block mx-auto" />
+          <.live_file_input upload={@uploads.announcement_docs} class="hidden" />
+          <label
+            class="outlined-button mx-auto cursor-pointer"
+            id="upload-files-button"
+            phx-hook="RippleEffect"
+            for={@uploads.announcement_docs.ref}
+          >
+            Browse
+          </label>
+          <p class="w-fit mx-auto">or drag files here</p>
         </div>
         <button class="filled-button ml-auto">Post</button>
       </.simple_form>
@@ -52,12 +60,13 @@ defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
         max_entries: 5
       )
 
+    IO.inspect(socket)
+
     {:ok, socket}
   end
 
   @impl true
   def handle_event("validate", _params, socket) do
-    IO.inspect(upload_errors(socket.assigns.uploads.announcement_docs))
     {:noreply, socket}
   end
 
@@ -99,6 +108,7 @@ defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
       end)
 
     Endpoint.broadcast(@announcements_topic, "announcement_created", announcement.id)
+    notify_parent(:created)
     {:noreply, socket}
   end
 
@@ -109,4 +119,6 @@ defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
   defp error_to_string(:too_large), do: "Too large"
   defp error_to_string(:not_accepted), do: "You have selected an unacceptable file type"
   defp error_to_string(:too_many_files), do: "You have selected too many files"
+
+  defp notify_parent(info), do: send(self(), {__MODULE__, info})
 end

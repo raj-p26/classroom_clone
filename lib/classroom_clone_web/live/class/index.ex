@@ -1,4 +1,5 @@
 defmodule ClassroomCloneWeb.Class.Index do
+  alias ClassroomClone.Uploads
   alias ClassroomClone.Accounts
   alias ClassroomCloneWeb.Endpoint
   alias ClassroomCloneWeb.Class.AnnouncementComponent
@@ -79,6 +80,10 @@ defmodule ClassroomCloneWeb.Class.Index do
     {:noreply, update(socket, :announcements, &[announcement | &1])}
   end
 
+  def handle_info({AnnouncementComponent, :created}, socket) do
+    {:noreply, put_flash(socket, :info, "Post created")}
+  end
+
   def handle_info(%{event: "enrolled", payload: user_id}, socket) do
     enrollments = socket.assigns.enrollments
     user = Accounts.get_user_details(user_id)
@@ -97,7 +102,12 @@ defmodule ClassroomCloneWeb.Class.Index do
         </div>
       </div>
       <p class="mt-2">{@content}</p>
+      <p>Attached documents: {get_document_count(@id)}</p>
     </div>
     """
+  end
+
+  defp get_document_count(announcement_id) do
+    Uploads.get_announcement_docs_count(announcement_id)
   end
 end

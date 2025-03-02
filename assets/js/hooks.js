@@ -32,12 +32,6 @@ export const RippleEffect = {
 /**
  * @type {Object.<string, import("phoenix_live_view")}
  */
-export const ModalHook = {
-  mounted() {
-    this.el.addEventListener("click", (event) => {
-      this.pushEvent("modal_open", {
-        type: "create",
-      });
-    });
-  },
+export const DownloadHook = {
+  mounted() {},
 };

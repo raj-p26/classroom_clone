@@ -47,13 +47,13 @@
     },
     options = {
       autoRun: true,
-      barThickness: 3,
+      barThickness: 4,
       barColors: {
-        0: "rgba(26,  188, 156, .9)",
-        ".25": "rgba(52,  152, 219, .9)",
-        ".50": "rgba(241, 196, 15,  .9)",
-        ".75": "rgba(230, 126, 34,  .9)",
-        "1.0": "rgba(211, 84,  0,   .9)",
+        0: "rgba(0, 104, 116, .9)",
+        ".25": "rgba(0, 104, 116, .9)",
+        ".50": "rgba(0, 104, 116, .9)",
+        ".75": "rgba(0, 104, 116, .9)",
+        "1.0": "rgba(0, 104, 116, .9)",
       },
       shadowBlur: 10,
       shadowColor: "rgba(0,   0,   0,   .6)",
@@ -63,19 +63,23 @@
       canvas.width = window.innerWidth;
       canvas.height = options.barThickness * 5; // need space for shadow
 
+      const barColor = document.querySelector("html").classList.contains("dark")
+        ? "#82d3e0"
+        : "#006874";
+
       var ctx = canvas.getContext("2d");
       ctx.shadowBlur = options.shadowBlur;
       ctx.shadowColor = options.shadowColor;
 
       var lineGradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
       for (var stop in options.barColors)
-        lineGradient.addColorStop(stop, options.barColors[stop]);
+        lineGradient.addColorStop(stop, barColor);
       ctx.lineWidth = options.barThickness;
       ctx.beginPath();
       ctx.moveTo(0, options.barThickness / 2);
       ctx.lineTo(
         Math.ceil(currentProgress * canvas.width),
-        options.barThickness / 2
+        options.barThickness / 2,
       );
       ctx.strokeStyle = lineGradient;
       ctx.stroke();
@@ -101,7 +105,7 @@
         if (delay) {
           if (delayTimerId) return;
           delayTimerId = setTimeout(() => topbar.show(), delay);
-        } else  {
+        } else {
           showing = true;
           if (fadeTimerId !== null) window.cancelAnimationFrame(fadeTimerId);
           if (!canvas) createCanvas();
@@ -112,7 +116,7 @@
             (function loop() {
               progressTimerId = window.requestAnimationFrame(loop);
               topbar.progress(
-                "+" + 0.05 * Math.pow(1 - Math.sqrt(currentProgress), 2)
+                "+" + 0.05 * Math.pow(1 - Math.sqrt(currentProgress), 2),
               );
             })();
           }
@@ -162,4 +166,4 @@
   } else {
     this.topbar = topbar;
   }
-}.call(this, window, document));
+}).call(this, window, document);
