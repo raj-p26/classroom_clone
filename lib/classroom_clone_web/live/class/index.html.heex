@@ -44,7 +44,7 @@
           </.modal>
 
           <div :for={announcement <- @announcements}>
-            <.show_announcement {announcement} />
+            <.show_announcement {announcement} class_id={@class.id} />
           </div>
         </div>
       </div>

@@ -108,4 +108,10 @@ defmodule ClassroomClone.Uploads do
     |> select([a], count("*"))
     |> Repo.one()
   end
+
+  def get_announcement_docs(announcement_id) do
+    AnnouncementDoc
+    |> where([a], a.announcement_id == ^announcement_id)
+    |> Repo.all()
+  end
 end

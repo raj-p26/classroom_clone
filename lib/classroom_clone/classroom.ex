@@ -4,6 +4,7 @@ defmodule ClassroomClone.Classroom do
   """
 
   import Ecto.Query, warn: false
+  alias ClassroomClone.Classroom.Announcement
   alias ClassroomClone.Accounts.User
   alias ClassroomClone.Repo
 
@@ -294,6 +295,15 @@ defmodule ClassroomClone.Classroom do
     rescue
       e -> {:error, Exception.message(e)}
     end
+  end
+
+  def user_enrolled?(class_id, user_id) do
+    query_result =
+      Enrollment
+      |> where([e], e.class_id == ^class_id and e.user_id == ^user_id)
+      |> Repo.one()
+
+    query_result !== nil
   end
 
   alias ClassroomClone.Classroom.Announcement

@@ -35,6 +35,8 @@ defmodule ClassroomCloneWeb.Router do
     live "/c/:id", Class.Index, :stream
     live "/c/:id/people", Class.Index, :people
     live "/c/:id/grades", Class.Index, :grades
+
+    live "/c/:id/a/:announcement_id", Announcements.Index
   end
 
   scope "/auth", ClassroomCloneWeb do

@@ -93,7 +93,12 @@ defmodule ClassroomCloneWeb.Class.Index do
 
   defp show_announcement(assigns) do
     ~H"""
-    <div class="border border-outline/30 dark:border-outline-dark/30 rounded-lg p-4 my-2">
+    <div
+      class="border border-outline/30 dark:border-outline-dark/30 rounded-lg p-4 my-2 cursor-pointer"
+      id={"announcement-#{@id}"}
+      phx-click={JS.patch(~p"/c/#{@class_id}/a/#{@id}")}
+      phx-hook="RippleEffect"
+    >
       <div class="flex items-center gap-4">
         <img src={@announcer_avatar} class="size-10 rounded-full" aria-hidden="true" />
         <div>

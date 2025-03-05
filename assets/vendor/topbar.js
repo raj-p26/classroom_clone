@@ -63,9 +63,10 @@
       canvas.width = window.innerWidth;
       canvas.height = options.barThickness * 5; // need space for shadow
 
-      const barColor = document.querySelector("html").classList.contains("dark")
-        ? "#82d3e0"
-        : "#006874";
+      const isDarkMode = () =>
+        document.querySelector("html").classList.contains("dark");
+
+      const barColor = isDarkMode() ? "#82d3e0" : "#006874";
 
       var ctx = canvas.getContext("2d");
       ctx.shadowBlur = options.shadowBlur;
