@@ -355,7 +355,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 min-h-[6rem]",
+          "mt-2 block w-full rounded-lg focus:ring-0 bg-transparent sm:text-sm sm:leading-6 min-h-[6rem]",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
@@ -432,7 +432,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
         <h1 class="text-lg font-semibold leading-8">
           {render_slot(@inner_block)}
         </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
+        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-outline dark:text-outline-dark">
           {render_slot(@subtitle)}
         </p>
       </div>
@@ -558,10 +558,10 @@ defmodule ClassroomCloneWeb.CoreComponents do
 
   def back(assigns) do
     ~H"""
-    <div class="mt-16">
+    <div>
       <.link
         navigate={@navigate}
-        class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+        class="text-sm font-semibold leading-6 text-on-surface dark:text-on-surface-dark"
       >
         <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
         {render_slot(@inner_block)}
@@ -686,7 +686,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
     <ul class="py-2 bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark">
       <li
         :for={{it, idx} <- Enum.with_index(@item)}
-        class="bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark h-[72px] hover:cursor-pointer px-4 flex items-center"
+        class="bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark h-[72px] hover:cursor-pointer px-4 flex items-center divide-y"
         id={"#{@id}-item-#{idx}"}
         phx-hook="RippleEffect"
       >

@@ -28,10 +28,3 @@ export const RippleEffect = {
     });
   },
 };
-
-/**
- * @type {Object.<string, import("phoenix_live_view")}
- */
-export const DownloadHook = {
-  mounted() {},
-};

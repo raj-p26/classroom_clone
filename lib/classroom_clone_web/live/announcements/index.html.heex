@@ -1,8 +1,60 @@
-<section class="max-w-[1400px] mx-auto border border-outline/30 dark:border-outline-dark/30 rounded-lg p-4 my-2">
-  <img src={@announcement.announcer_avatar} class="rounded-full" />
-  <h1 class="text-2xl">{@announcement.content}</h1>
+<section class="max-w-[1400px] mx-auto">
+  <.back navigate={~p"/c/#{@class_id}"}>Go Back</.back>
+  <div class="border border-outline/30 dark:border-outline-dark/30 rounded-lg p-4 my-2">
+    <div class="flex items-center gap-4 px-4">
+      <img src={@announcement.announcer_avatar} class="rounded-full size-12" />
+      <p>{@announcement.announcer_name}</p>
+    </div>
+    <hr class="my-2 border-outline dark:border-outline-dark opacity-30" />
+    <h1 class="text-lg">{@announcement.content}</h1>
 
-  <a :for={doc <- @docs} href={"/uploads/announcements/#{doc.file_path}"} target="_blank" download>
-    {Path.basename(doc.file_path)}
-  </a>
+    <h2 :if={length(@docs) !== 0} class="mb-4">Attached Documents:</h2>
+
+    <a
+      :for={doc <- @docs}
+      href={"/uploads/announcements/#{doc.file_path}"}
+      class="outlined-card flex items-center gap-2"
+      target="_blank"
+      download
+    >
+      <.icon name="hero-document-arrow-down" />
+      <p>{Path.basename(doc.file_path)}</p>
+    </a>
+  </div>
+
+  <hr class="my-4 border-outline dark:border-outline-dark" />
+  <.header>
+    Comments
+    <:subtitle>Comments posted by students in this announcement</:subtitle>
+  </.header>
+
+  <div id="comments-list" phx-update="stream">
+    <.show_comment :for={{id, comment} <- @streams.comments} id={id} comment={comment} />
+  </div>
+
+  <div class="fixed bottom-14 right-14">
+    <button
+      class="primary-fab"
+      id="create-comment-btn"
+      phx-hook="RippleEffect"
+      phx-click="show-create-comment-modal"
+      title="Add comment"
+    >
+      <.icon name="hero-chat-bubble-bottom-center-text" />
+    </button>
+  </div>
+
+  <.modal
+    :if={@show_create_comment_modal}
+    show
+    id="create-comment-modal"
+    on_cancel={JS.push("hide-create-comment-modal")}
+  >
+    <.live_component
+      module={CommentsComponent}
+      id="create-comments-component"
+      user_id={@user.id}
+      announcement_id={@announcement.id}
+    />
+  </.modal>
 </section>

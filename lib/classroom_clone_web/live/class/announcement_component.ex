@@ -56,19 +56,15 @@ defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
       |> assign(assigns)
       |> assign_new(:announcement, fn -> to_form(announcement) end)
       |> allow_upload(:announcement_docs,
-        accept: ~w(.jpg .mp4 .png .jpeg),
+        accept: ~w(.jpg .mp4 .png .jpeg .zip .docx .pptx .xlsx .csv),
         max_entries: 5
       )
-
-    IO.inspect(socket)
 
     {:ok, socket}
   end
 
   @impl true
-  def handle_event("validate", _params, socket) do
-    {:noreply, socket}
-  end
+  def handle_event("validate", _params, socket), do: {:noreply, socket}
 
   @impl true
   def handle_event("submit-announcement", %{"content" => content}, socket) do
