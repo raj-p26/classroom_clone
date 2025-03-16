@@ -4,6 +4,7 @@ defmodule ClassroomClone.Classroom do
   """
 
   import Ecto.Query, warn: false
+  alias ClassroomClone.Uploads.AnnouncementDoc
   alias ClassroomClone.Classroom.Announcement
   alias ClassroomClone.Accounts.User
   alias ClassroomClone.Repo
@@ -106,6 +107,18 @@ defmodule ClassroomClone.Classroom do
   """
   def change_class(%Class{} = class, attrs \\ %{}) do
     Class.changeset(class, attrs)
+  end
+
+  def class_owner?(class_id, user_id) do
+    class =
+      Class
+      |> where([c], c.id == ^class_id)
+      |> Repo.one()
+
+    case class do
+      nil -> false
+      c -> c.user_id == user_id
+    end
   end
 
   alias ClassroomClone.Classroom.Enrollment
@@ -389,6 +402,13 @@ defmodule ClassroomClone.Classroom do
     Repo.delete(announcement)
   end
 
+  def delete_announcement_by_id(id) do
+    Announcement
+    |> where([a], a.id == ^id)
+    |> Repo.one()
+    |> Repo.delete()
+  end
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking announcement changes.
 
@@ -406,14 +426,17 @@ defmodule ClassroomClone.Classroom do
     Announcement
     |> where([a], a.class_id == ^class_id)
     |> join(:inner, [a], u in User, on: a.user_id == u.id)
-    |> select([a, u], %{
+    |> join(:left, [a, u], d in AnnouncementDoc, on: d.announcement_id == a.id)
+    |> select([a, u, d], %{
       id: a.id,
       announcer_avatar: u.avatar,
       announcer_name: u.username,
       announced_at: a.inserted_at,
-      content: a.content
+      content: a.content,
+      document_count: count(d.id)
     })
-    |> order_by([a, u], desc: a.inserted_at)
+    |> order_by([a, u, d], desc: a.inserted_at)
+    |> group_by([a, u, d], a.id)
     |> Repo.all()
   end
 
@@ -421,13 +444,28 @@ defmodule ClassroomClone.Classroom do
     Announcement
     |> where([a], a.id == ^id)
     |> join(:inner, [a], u in User, on: a.user_id == u.id)
-    |> select([a, u], %{
+    |> join(:left, [a, u], d in AnnouncementDoc, on: a.id == d.announcement_id)
+    |> select([a, u, d], %{
       id: a.id,
       announcer_avatar: u.avatar,
       announcer_name: u.username,
       announced_at: a.inserted_at,
-      content: a.content
+      content: a.content,
+      document_count: count(d.id)
     })
+    |> group_by([a, u, d], a.id)
     |> Repo.one()
+  end
+
+  def announcement_owner?(announcement_id, user_id) do
+    announcement =
+      Announcement
+      |> where([a], a.id == ^announcement_id)
+      |> Repo.one()
+
+    case announcement do
+      nil -> false
+      a -> a.user_id == user_id
+    end
   end
 end

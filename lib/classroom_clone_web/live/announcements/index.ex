@@ -95,7 +95,12 @@ defmodule ClassroomCloneWeb.Announcements.Index do
     <div class="border border-outline/30 dark:border-outline-dark/30 rounded-lg p-4 my-2" id={@id}>
       <div class="flex items-center gap-4 px-4">
         <img src={@comment.user_avatar} class="rounded-full size-12" />
-        <p>{@comment.username}</p>
+        <div>
+          <p>{@comment.username}</p>
+          <p class="text-sm font-light">
+            {Calendar.strftime(@comment.commented_at, "%B %d, %Y [%I:%M %p]")}
+          </p>
+        </div>
       </div>
       <hr class="my-2 border-outline dark:border-outline-dark opacity-30" />
       <h1 class="text-lg">{@comment.content}</h1>

@@ -116,7 +116,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
       class={[
         "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-[150] rounded-lg p-3 ring-1",
         @kind == :info &&
-          "bg-primary-container dark:bg-primary-container-dark text-on-primary-container dark:text-on-primary-container-dark shadow-md ring-primary dark:ring-primary-dark fill-primary dark:fill-primary-dark",
+          "bg-inverse-surface dark:bg-inverse-surface-dark text-inverse-on-surface dark:text-inverse-on-surface-dark shadow-md ring-outline dark:ring-outline-dark fill-outline dark:fill-outline-dark",
         @kind == :error &&
           "bg-error-container dark:bg-error-container-dark text-on-error-container dark:text-on-error-container-dark shadow-md ring-error dark:ring-error-dark fill-error dark:fill-error-dark"
       ]}

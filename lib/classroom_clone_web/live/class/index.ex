@@ -1,5 +1,4 @@
 defmodule ClassroomCloneWeb.Class.Index do
-  alias ClassroomClone.Uploads
   alias ClassroomClone.Accounts
   alias ClassroomCloneWeb.Endpoint
   alias ClassroomCloneWeb.Class.AnnouncementComponent
@@ -22,6 +21,7 @@ defmodule ClassroomCloneWeb.Class.Index do
       |> assign_enrollments
       |> assign_live_title
       |> assign_announcements
+      |> assign_is_class_owner
       |> assign(:make_announcement, false)
 
     {:ok, socket}
@@ -47,10 +47,16 @@ defmodule ClassroomCloneWeb.Class.Index do
 
   defp assign_announcements(socket) do
     class_id = socket.assigns.class.id
-
     announcements = Classroom.announcements_by_class_id(class_id)
 
     assign(socket, :announcements, announcements)
+  end
+
+  defp assign_is_class_owner(socket) do
+    class = socket.assigns.class
+    user = socket.assigns.user
+
+    assign(socket, :is_class_owner, class.user_id == user.id)
   end
 
   @impl true
@@ -69,6 +75,23 @@ defmodule ClassroomCloneWeb.Class.Index do
   end
 
   @impl true
+  def handle_event("delete-announcement", %{"id" => id}, socket) do
+    result = Classroom.delete_announcement_by_id(id)
+
+    delete_announcement(socket, id, result)
+  end
+
+  defp delete_announcement(socket, id, {:ok, _}) do
+    Endpoint.broadcast(@announcements_topic, "announcement_deleted", id)
+
+    {:noreply, put_flash(socket, :info, "Announcement deleted")}
+  end
+
+  defp delete_announcement(socket, _, {:error, _}) do
+    {:noreply, put_flash(socket, :error, "Unable to delete flash")}
+  end
+
+  @impl true
   def handle_info(
         %{event: "announcement_created", payload: announcement_id},
         socket
@@ -78,6 +101,19 @@ defmodule ClassroomCloneWeb.Class.Index do
     socket = update(socket, :make_announcement, fn _prev_state -> false end)
 
     {:noreply, update(socket, :announcements, &[announcement | &1])}
+  end
+
+  @impl true
+  def handle_info(%{event: "announcement_deleted"} = info, socket) do
+    %{payload: id} = info
+    old_announcements = socket.assigns.announcements
+
+    new_announcements =
+      Enum.filter(old_announcements, fn announcement ->
+        announcement.id !== id
+      end)
+
+    {:noreply, update(socket, :announcements, fn _ -> new_announcements end)}
   end
 
   def handle_info({AnnouncementComponent, :created}, socket) do
@@ -94,12 +130,11 @@ defmodule ClassroomCloneWeb.Class.Index do
   defp show_announcement(assigns) do
     ~H"""
     <div
-      class="border border-outline/30 dark:border-outline-dark/30 rounded-lg p-4 my-2 cursor-pointer"
+      class="border border-outline/30 dark:border-outline-dark/30 rounded-lg p-4 my-2"
       id={"announcement-#{@id}"}
-      phx-click={JS.patch(~p"/c/#{@class_id}/a/#{@id}")}
-      phx-hook="RippleEffect"
+      phx-remove={hide("#announcement-#{@id}")}
     >
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-4 relative">
         <img src={@announcer_avatar} class="size-10 rounded-full" aria-hidden="true" />
         <div>
           <p class="text-lg">{@announcer_name}</p>
@@ -107,12 +142,25 @@ defmodule ClassroomCloneWeb.Class.Index do
         </div>
       </div>
       <p class="mt-2">{@content}</p>
-      <p>Attached documents: {get_document_count(@id)}</p>
+      <p>Attached documents: {@document_count}</p>
+      <div class="flex gap-4">
+        <button class="text-button" phx-click={JS.patch(~p"/c/#{@class_id}/a/#{@id}")}>
+          View
+        </button>
+        <button
+          :if={@is_class_owner}
+          id={"delete-#{@id}-btn"}
+          phx-hook="RippleEffect"
+          class="filled-tonal-button"
+          phx-click={
+            JS.push("delete-announcement", value: %{id: @id})
+            |> hide("#announcement-#{@id}")
+          }
+        >
+          Delete
+        </button>
+      </div>
     </div>
     """
-  end
-
-  defp get_document_count(announcement_id) do
-    Uploads.get_announcement_docs_count(announcement_id)
   end
 end

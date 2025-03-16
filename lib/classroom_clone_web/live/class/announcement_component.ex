@@ -40,8 +40,19 @@ defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
       <p :for={err <- upload_errors(@uploads.announcement_docs)} class="text-error">
         {error_to_string(err)}
       </p>
-      <div :for={entry <- @uploads.announcement_docs.entries}>
-        {entry.client_name}
+      <div
+        :for={entry <- @uploads.announcement_docs.entries}
+        class="flex items-center justify-between mt-4"
+      >
+        <p>{entry.client_name}</p>
+        <button
+          class="text-button"
+          phx-click="cancel-upload"
+          phx-value-ref={entry.ref}
+          phx-target={@myself}
+        >
+          <.icon name="hero-x-mark" class="cursor-pointer" />
+        </button>
       </div>
     </div>
     """
@@ -65,6 +76,11 @@ defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
 
   @impl true
   def handle_event("validate", _params, socket), do: {:noreply, socket}
+
+  @impl true
+  def handle_event("cancel-upload", %{"ref" => ref}, socket) do
+    {:noreply, cancel_upload(socket, :announcement_docs, ref)}
+  end
 
   @impl true
   def handle_event("submit-announcement", %{"content" => content}, socket) do
