@@ -131,4 +131,129 @@ defmodule ClassroomClone.Comments do
     |> order_by([c, u], desc: c.inserted_at)
     |> Repo.all()
   end
+
+  alias ClassroomClone.Comments.AssignmentComment
+
+  @doc """
+  Returns the list of assignment_comments.
+
+  ## Examples
+
+      iex> list_assignment_comments()
+      [%AssignmentComment{}, ...]
+
+  """
+  def list_assignment_comments do
+    Repo.all(AssignmentComment)
+  end
+
+  def list_assignment_comments(assignment_id) do
+    AssignmentComment
+    |> where([ac], ac.assignment_id == ^assignment_id)
+    |> join(:inner, [ac], u in User, on: ac.user_id == u.id)
+    |> select([ac, u], %{
+      id: ac.id,
+      content: ac.content,
+      username: u.username,
+      user_avatar: u.avatar,
+      commented_at: ac.inserted_at
+    })
+    |> order_by([ac, u], desc: ac.inserted_at)
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets a single assignment_comment.
+
+  Raises `Ecto.NoResultsError` if the Assignment comment does not exist.
+
+  ## Examples
+
+      iex> get_assignment_comment!(123)
+      %AssignmentComment{}
+
+      iex> get_assignment_comment!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_assignment_comment!(id), do: Repo.get!(AssignmentComment, id)
+
+  def get_assignment_comment(id) do
+    AssignmentComment
+    |> where([ac], ac.id == ^id)
+    |> join(:inner, [ac], u in User, on: ac.user_id == u.id)
+    |> select([ac, u], %{
+      id: ac.id,
+      username: u.username,
+      user_avatar: u.avatar,
+      content: ac.content,
+      commented_at: ac.inserted_at
+    })
+    |> Repo.one()
+  end
+
+  @doc """
+  Creates a assignment_comment.
+
+  ## Examples
+
+      iex> create_assignment_comment(%{field: value})
+      {:ok, %AssignmentComment{}}
+
+      iex> create_assignment_comment(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_assignment_comment(attrs \\ %{}) do
+    %AssignmentComment{}
+    |> AssignmentComment.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a assignment_comment.
+
+  ## Examples
+
+      iex> update_assignment_comment(assignment_comment, %{field: new_value})
+      {:ok, %AssignmentComment{}}
+
+      iex> update_assignment_comment(assignment_comment, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_assignment_comment(%AssignmentComment{} = assignment_comment, attrs) do
+    assignment_comment
+    |> AssignmentComment.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a assignment_comment.
+
+  ## Examples
+
+      iex> delete_assignment_comment(assignment_comment)
+      {:ok, %AssignmentComment{}}
+
+      iex> delete_assignment_comment(assignment_comment)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_assignment_comment(%AssignmentComment{} = assignment_comment) do
+    Repo.delete(assignment_comment)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking assignment_comment changes.
+
+  ## Examples
+
+      iex> change_assignment_comment(assignment_comment)
+      %Ecto.Changeset{data: %AssignmentComment{}}
+
+  """
+  def change_assignment_comment(%AssignmentComment{} = assignment_comment, attrs \\ %{}) do
+    AssignmentComment.changeset(assignment_comment, attrs)
+  end
 end

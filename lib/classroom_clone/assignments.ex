@@ -27,8 +27,7 @@ defmodule ClassroomClone.Assignments do
     |> where([a], a.class_id == ^class_id)
     |> select([a], %{
       id: a.id,
-      title: a.title,
-      description: a.description
+      title: a.title
     })
     |> order_by([a], desc: a.inserted_at)
     |> Repo.all()
@@ -59,7 +58,7 @@ defmodule ClassroomClone.Assignments do
       title: a.title,
       description: a.description,
       due_date: a.due_date,
-      document: a_doc.file_path
+      doc_path: a_doc.file_path
     })
     |> Repo.one()
   end

@@ -6,15 +6,48 @@
   <div class="filled-card">
     <p class="text-2xl font-semibold">{@assignment.title}</p>
     <p>{@assignment.description || "No Description Provided"}</p>
-    <p>
+    <p class="flex items-center gap-2 mt-4">
       <.icon name="hero-calendar-days" />
-      <span>{@assignment.due_date || "No Due Date"}</span>
-      <span
-        :if={@assignment.due_date && Date.before?(@assignment.due_date, Date.utc_today())}
-        class="text-error dark:text-error-dark"
-      >
-        Outdated
-      </span>
+      <%= if @assignment.due_date do %>
+        <span class={
+          if(Date.before?(@assignment.due_date, Date.utc_today()),
+            do: "text-error dark:text-error-dark",
+            else: nil
+          )
+        }>
+          {@assignment.due_date}
+        </span>
+      <% else %>
+        <span>No Due Date</span>
+      <% end %>
     </p>
+
+    <a
+      :if={@assignment.doc_path}
+      href={"/uploads/assignments/#{@assignment.doc_path}"}
+      class="elevated-card flex items-center gap-2 mt-4"
+      target="_blank"
+      download
+    >
+      <.icon name="hero-document-arrow-down" />
+      <p>{Path.basename(@assignment.doc_path)}</p>
+    </a>
+  </div>
+
+  <hr class="border border-outline dark:border-outline-dark opacity-40 my-4" />
+
+  <.live_component
+    module={CreateCommentComponent}
+    id="create-comment-component"
+    user_id={@user.id}
+    assignment_id={@assignment_id}
+  />
+
+  <.header>
+    Comments
+  </.header>
+
+  <div phx-update="stream" id="comments-container">
+    <.show_comment :for={{id, comment} <- @streams.comments} id={id} comment={comment} />
   </div>
 </div>

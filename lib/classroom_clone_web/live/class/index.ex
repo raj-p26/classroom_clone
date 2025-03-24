@@ -9,11 +9,13 @@ defmodule ClassroomCloneWeb.Class.Index do
   use ClassroomCloneWeb, :live_view
 
   @announcements_topic "announcements"
+  @assignments_topic "assignments"
 
   @impl true
   def mount(params, %{"user" => user}, socket) do
     if connected?(socket) do
       Endpoint.subscribe(@announcements_topic)
+      Endpoint.subscribe(@assignments_topic)
     end
 
     socket =
@@ -160,6 +162,13 @@ defmodule ClassroomCloneWeb.Class.Index do
     {:noreply, socket}
   end
 
+  def handle_info(%{event: "assignment-created"} = info, socket) do
+    %{payload: asgmt_id} = info
+    assignment = Assignments.get_assignment(asgmt_id)
+
+    {:noreply, update(socket, :assignments, &[assignment | &1])}
+  end
+
   defp show_announcement(assigns) do
     ~H"""
     <div
@@ -176,7 +185,7 @@ defmodule ClassroomCloneWeb.Class.Index do
       </div>
       <p class="mt-2">{@content}</p>
       <p>Attached documents: {@document_count}</p>
-      <div class="flex gap-4">
+      <div class="flex gap-4 mt-4">
         <button class="text-button" phx-click={JS.patch(~p"/c/#{@class_id}/a/#{@id}")}>
           View
         </button>
@@ -184,7 +193,7 @@ defmodule ClassroomCloneWeb.Class.Index do
           :if={@is_class_owner}
           id={"delete-#{@id}-btn"}
           phx-hook="RippleEffect"
-          class="filled-tonal-button"
+          class="error-button"
           phx-click={
             JS.push("delete-announcement", value: %{id: @id})
             |> hide("#announcement-#{@id}")

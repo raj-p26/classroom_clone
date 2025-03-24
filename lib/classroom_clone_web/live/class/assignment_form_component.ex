@@ -1,8 +1,11 @@
 defmodule ClassroomCloneWeb.Class.AssignmentFormComponent do
+  alias ClassroomCloneWeb.Endpoint
   alias ClassroomClone.Uploads
   alias ClassroomClone.Assignments.Assignment
   alias ClassroomClone.Assignments
   use ClassroomCloneWeb, :live_component
+
+  @assignments_topic "assignments"
 
   @impl true
   def render(assigns) do
@@ -112,6 +115,7 @@ defmodule ClassroomCloneWeb.Class.AssignmentFormComponent do
         {:ok, file_destination}
       end)
 
+    Endpoint.broadcast(@assignments_topic, "assignment-created", asgmt.id)
     notify_parent(:created)
     {:noreply, socket}
   end

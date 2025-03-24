@@ -68,6 +68,10 @@
   @apply base-button text-primary dark:text-primary-dark hover:bg-surface-container/50 dark:hover:bg-surface-container-dark/50;
 }
 
+.error-button {
+  @apply base-button text-error dark:text-error-dark bg-error-container dark:bg-error-container-dark;
+}
+
 /* Floating Action Button styles */
 
 .base-fab {
