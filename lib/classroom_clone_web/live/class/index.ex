@@ -1,7 +1,9 @@
 defmodule ClassroomCloneWeb.Class.Index do
+  alias ClassroomClone.Assignments
   alias ClassroomClone.Accounts
   alias ClassroomCloneWeb.Endpoint
   alias ClassroomCloneWeb.Class.AnnouncementComponent
+  alias ClassroomCloneWeb.Class.AssignmentFormComponent
   alias ClassroomClone.Classroom
 
   use ClassroomCloneWeb, :live_view
@@ -22,7 +24,9 @@ defmodule ClassroomCloneWeb.Class.Index do
       |> assign_live_title
       |> assign_announcements
       |> assign_is_class_owner
+      |> assign_assignments
       |> assign(:make_announcement, false)
+      |> assign(:create_assignment, false)
 
     {:ok, socket}
   end
@@ -59,8 +63,25 @@ defmodule ClassroomCloneWeb.Class.Index do
     assign(socket, :is_class_owner, class.user_id == user.id)
   end
 
+  defp assign_assignments(socket) do
+    class_id = socket.assigns.class.id
+
+    assignments = Assignments.get_assignments_by_class_id(class_id)
+    assign(socket, :assignments, assignments)
+  end
+
   @impl true
   def handle_params(_params, _uri, socket), do: {:noreply, socket}
+
+  @impl true
+  def handle_event("create-asgmt", _params, socket) do
+    {:noreply, update(socket, :create_assignment, fn _ -> true end)}
+  end
+
+  @impl true
+  def handle_event("hide-create-assignment", _params, socket) do
+    {:noreply, update(socket, :create_assignment, fn _ -> false end)}
+  end
 
   @impl true
   def handle_event("close-announcement-modal", _params, socket) do
@@ -98,8 +119,6 @@ defmodule ClassroomCloneWeb.Class.Index do
       ) do
     announcement = Classroom.announcement_by_id(announcement_id)
 
-    socket = update(socket, :make_announcement, fn _prev_state -> false end)
-
     {:noreply, update(socket, :announcements, &[announcement | &1])}
   end
 
@@ -117,6 +136,11 @@ defmodule ClassroomCloneWeb.Class.Index do
   end
 
   def handle_info({AnnouncementComponent, :created}, socket) do
+    socket =
+      socket
+      |> put_flash(:info, "Post Created")
+      |> update(:make_announcement, fn _ -> false end)
+
     {:noreply, put_flash(socket, :info, "Post created")}
   end
 
@@ -125,6 +149,15 @@ defmodule ClassroomCloneWeb.Class.Index do
     user = Accounts.get_user_details(user_id)
 
     {:noreply, assign(socket, :enrollments, enrollments ++ [user])}
+  end
+
+  def handle_info({AssignmentFormComponent, :created}, socket) do
+    socket =
+      socket
+      |> update(:create_assignment, fn _ -> false end)
+      |> put_flash(:info, "Assignment Created")
+
+    {:noreply, socket}
   end
 
   defp show_announcement(assigns) do

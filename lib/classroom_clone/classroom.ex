@@ -403,6 +403,13 @@ defmodule ClassroomClone.Classroom do
   end
 
   def delete_announcement_by_id(id) do
+    if File.dir?("priv/static/uploads/announcements/#{id}") do
+      case File.rm_rf("priv/static/uploads/announcements/#{id}") do
+        {:ok, _deleted_files} -> nil
+        {:error, reason, _file} -> IO.puts(reason)
+      end
+    end
+
     Announcement
     |> where([a], a.id == ^id)
     |> Repo.one()

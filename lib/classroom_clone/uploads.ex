@@ -114,4 +114,100 @@ defmodule ClassroomClone.Uploads do
     |> where([a], a.announcement_id == ^announcement_id)
     |> Repo.all()
   end
+
+  alias ClassroomClone.Uploads.AssignmentDoc
+
+  @doc """
+  Returns the list of assignment_docs.
+
+  ## Examples
+
+      iex> list_assignment_docs()
+      [%AssignmentDoc{}, ...]
+
+  """
+  def list_assignment_docs do
+    Repo.all(AssignmentDoc)
+  end
+
+  @doc """
+  Gets a single assignment_doc.
+
+  Raises `Ecto.NoResultsError` if the Assignment doc does not exist.
+
+  ## Examples
+
+      iex> get_assignment_doc!(123)
+      %AssignmentDoc{}
+
+      iex> get_assignment_doc!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_assignment_doc!(id), do: Repo.get!(AssignmentDoc, id)
+
+  @doc """
+  Creates a assignment_doc.
+
+  ## Examples
+
+      iex> create_assignment_doc(%{field: value})
+      {:ok, %AssignmentDoc{}}
+
+      iex> create_assignment_doc(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_assignment_doc(attrs \\ %{}) do
+    %AssignmentDoc{}
+    |> AssignmentDoc.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a assignment_doc.
+
+  ## Examples
+
+      iex> update_assignment_doc(assignment_doc, %{field: new_value})
+      {:ok, %AssignmentDoc{}}
+
+      iex> update_assignment_doc(assignment_doc, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_assignment_doc(%AssignmentDoc{} = assignment_doc, attrs) do
+    assignment_doc
+    |> AssignmentDoc.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a assignment_doc.
+
+  ## Examples
+
+      iex> delete_assignment_doc(assignment_doc)
+      {:ok, %AssignmentDoc{}}
+
+      iex> delete_assignment_doc(assignment_doc)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_assignment_doc(%AssignmentDoc{} = assignment_doc) do
+    Repo.delete(assignment_doc)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking assignment_doc changes.
+
+  ## Examples
+
+      iex> change_assignment_doc(assignment_doc)
+      %Ecto.Changeset{data: %AssignmentDoc{}}
+
+  """
+  def change_assignment_doc(%AssignmentDoc{} = assignment_doc, attrs \\ %{}) do
+    AssignmentDoc.changeset(assignment_doc, attrs)
+  end
 end

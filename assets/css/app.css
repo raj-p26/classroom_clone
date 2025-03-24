@@ -27,7 +27,7 @@
 /* Card Styles */
 
 .base-card {
-  @apply rounded-[12px] p-4 cursor-pointer h-fit;
+  @apply rounded-[12px] p-4 h-fit;
 }
 
 .elevated-card {

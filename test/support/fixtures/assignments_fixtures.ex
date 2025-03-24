@@ -1,0 +1,22 @@
+defmodule ClassroomClone.AssignmentsFixtures do
+  @moduledoc """
+  This module defines test helpers for creating
+  entities via the `ClassroomClone.Assignments` context.
+  """
+
+  @doc """
+  Generate a assignment.
+  """
+  def assignment_fixture(attrs \\ %{}) do
+    {:ok, assignment} =
+      attrs
+      |> Enum.into(%{
+        description: "some description",
+        due_date: ~D[2025-03-18],
+        title: "some title"
+      })
+      |> ClassroomClone.Assignments.create_assignment()
+
+    assignment
+  end
+end

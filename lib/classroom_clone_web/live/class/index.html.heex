@@ -1,5 +1,6 @@
 <.tab_bar id="primary-tab" active_tab={@live_action}>
   <:tab name={:stream} action={JS.patch(~p"/c/#{@class.id}/")}>Stream</:tab>
+  <:tab name={:assignments} action={JS.patch(~p"/c/#{@class.id}/w")}>Assignments</:tab>
   <:tab name={:people} action={JS.patch(~p"/c/#{@class.id}/people")}>People</:tab>
   <:tab name={:grades} action={JS.patch(~p"/c/#{@class.id}/grades")}>Grades</:tab>
 </.tab_bar>
@@ -52,6 +53,38 @@
           </div>
         </div>
       </div>
+    <% :assignments -> %>
+      <.list_view id="assignments-list">
+        <:item :for={asgmt <- @assignments} action={JS.patch(~p"/c/#{@class.id}/w/#{asgmt.id}")}>
+          <p class="flex items-center justify-center gap-2">
+            <.icon name="hero-clipboard-document-list" />
+            {asgmt.title}
+          </p>
+        </:item>
+      </.list_view>
+
+      <div :if={@is_class_owner} class="fixed bottom-14 right-14 z-50">
+        <button
+          class="primary-fab"
+          id="create-assignment-btn"
+          phx-click="create-asgmt"
+          phx-hook="RippleEffect"
+        >
+          <.icon name="hero-pencil-square" />
+        </button>
+      </div>
+      <.modal
+        :if={@create_assignment}
+        id="create-assignment-modal"
+        show
+        on_cancel={JS.push("hide-create-assignment")}
+      >
+        <.live_component
+          module={AssignmentFormComponent}
+          class_id={@class.id}
+          id="assignment-form-component"
+        />
+      </.modal>
     <% :people -> %>
       <.list_view id="people-list">
         <:item :for={enrollment <- @enrollments}>
@@ -61,5 +94,7 @@
       </.list_view>
     <% :grades -> %>
       <h1 class="text-2xl">Showing Grades...</h1>
+    <% _ -> %>
+      <h1 class="text-2xl font-bold">Not Found</h1>
   <% end %>
 </div>

@@ -310,7 +310,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
 
     ~H"""
     <div>
-      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
+      <label class="flex items-center gap-4 text-sm leading-6">
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
         <input
           type="checkbox"
@@ -355,9 +355,10 @@ defmodule ClassroomCloneWeb.CoreComponents do
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg focus:ring-0 bg-transparent sm:text-sm sm:leading-6 min-h-[6rem]",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
+          "mt-2 block w-full rounded-lg focus:ring-0 bg-transparent sm:text-sm sm:leading-6 min-h-[6rem] caret-primary dark:caret-primary-dark",
+          @errors == [] &&
+            "border-outline dark:border-outline-dark focus:border-primary focus:dark:border-primary-dark",
+          @errors != [] && "border-error focus:border-error"
         ]}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
@@ -378,8 +379,10 @@ defmodule ClassroomCloneWeb.CoreComponents do
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
           "mt-2 block w-full rounded-lg focus:ring-0 sm:text-sm sm:leading-6 bg-transparent",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
+          "caret-primary caret-primary-dark",
+          @errors == [] &&
+            "border-outline dark:border-outline-dark focus:border-primary focus:dark:border-primary-dark",
+          @errors != [] && "border-error focus:border-error"
         ]}
         {@rest}
       />
@@ -396,7 +399,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
+    <label for={@for} class="block text-sm font-semibold leading-6">
       {render_slot(@inner_block)}
     </label>
     """
@@ -409,7 +412,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
 
   def error(assigns) do
     ~H"""
-    <p class="mt-3 flex gap-3 text-sm leading-6 text-rose-600">
+    <p class="mt-3 flex gap-3 text-sm leading-6 text-error dark:text-error-dark">
       <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
       {render_slot(@inner_block)}
     </p>
@@ -559,10 +562,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
   def back(assigns) do
     ~H"""
     <div>
-      <.link
-        navigate={@navigate}
-        class="text-sm font-semibold leading-6 text-on-surface dark:text-on-surface-dark"
-      >
+      <.link navigate={@navigate} class="text-sm font-semibold leading-6">
         <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
         {render_slot(@inner_block)}
       </.link>
@@ -635,7 +635,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
 
     ~H"""
     <div
-      class={[@type, @class]}
+      class={[@type, @class, if(@clickable, do: "cursor-pointer", else: nil)]}
       id={@id}
       phx-click={@on_click}
       phx-hook={if @clickable, do: "RippleEffect", else: nil}
@@ -679,16 +679,20 @@ defmodule ClassroomCloneWeb.CoreComponents do
   end
 
   attr :id, :string, required: true
-  slot :item, required: false
+
+  slot :item, required: false do
+    attr :action, JS, required: false
+  end
 
   def list_view(assigns) do
     ~H"""
-    <ul class="py-2 bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark">
+    <ul class="py-2 bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark divide-y divide-outline/70 dark:divide-outline-dark/70">
       <li
         :for={{it, idx} <- Enum.with_index(@item)}
-        class="bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark h-[72px] hover:cursor-pointer px-4 flex items-center divide-y"
+        class="bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark h-[72px] hover:cursor-pointer px-4 flex items-center"
         id={"#{@id}-item-#{idx}"}
         phx-hook="RippleEffect"
+        phx-click={Map.get(it, :action)}
       >
         {render_slot(it)}
       </li>

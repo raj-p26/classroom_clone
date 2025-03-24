@@ -19,7 +19,7 @@ defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
         phx-change="validate"
         phx-target={@myself}
       >
-        <.input value="" placeholder="Announcement" name="content" field={@announcement[:content]} />
+        <.input placeholder="Announcement" field={@announcement[:content]} type="textarea" />
         <div
           phx-drop-target={@uploads.announcement_docs.ref}
           class="border border-dashed rounded-xl py-20"
@@ -83,12 +83,12 @@ defmodule ClassroomCloneWeb.Class.AnnouncementComponent do
   end
 
   @impl true
-  def handle_event("submit-announcement", %{"content" => content}, socket) do
+  def handle_event("submit-announcement", %{"announcement" => announcement}, socket) do
     user_id = socket.assigns.user_id
     class_id = socket.assigns.class_id
 
     announcement_params = %{
-      "content" => content,
+      "content" => announcement["content"],
       "user_id" => user_id,
       "class_id" => class_id
     }

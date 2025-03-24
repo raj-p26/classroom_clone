@@ -1,0 +1,20 @@
+<div class="max-w-[1400px] mx-auto">
+  <div class="mb-4">
+    <.back navigate={~p"/c/#{@class_id}/w"}>Back</.back>
+  </div>
+
+  <div class="filled-card">
+    <p class="text-2xl font-semibold">{@assignment.title}</p>
+    <p>{@assignment.description || "No Description Provided"}</p>
+    <p>
+      <.icon name="hero-calendar-days" />
+      <span>{@assignment.due_date || "No Due Date"}</span>
+      <span
+        :if={@assignment.due_date && Date.before?(@assignment.due_date, Date.utc_today())}
+        class="text-error dark:text-error-dark"
+      >
+        Outdated
+      </span>
+    </p>
+  </div>
+</div>
