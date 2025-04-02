@@ -19,4 +19,18 @@ defmodule ClassroomClone.AssignmentsFixtures do
 
     assignment
   end
+
+  @doc """
+  Generate a submission.
+  """
+  def submission_fixture(attrs \\ %{}) do
+    {:ok, submission} =
+      attrs
+      |> Enum.into(%{
+        file_path: "some file_path"
+      })
+      |> ClassroomClone.Assignments.create_submission()
+
+    submission
+  end
 end

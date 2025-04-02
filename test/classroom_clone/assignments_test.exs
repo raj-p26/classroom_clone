@@ -60,4 +60,58 @@ defmodule ClassroomClone.AssignmentsTest do
       assert %Ecto.Changeset{} = Assignments.change_assignment(assignment)
     end
   end
+
+  describe "submissions" do
+    alias ClassroomClone.Assignments.Submission
+
+    import ClassroomClone.AssignmentsFixtures
+
+    @invalid_attrs %{file_path: nil}
+
+    test "list_submissions/0 returns all submissions" do
+      submission = submission_fixture()
+      assert Assignments.list_submissions() == [submission]
+    end
+
+    test "get_submission!/1 returns the submission with given id" do
+      submission = submission_fixture()
+      assert Assignments.get_submission!(submission.id) == submission
+    end
+
+    test "create_submission/1 with valid data creates a submission" do
+      valid_attrs = %{file_path: "some file_path"}
+
+      assert {:ok, %Submission{} = submission} = Assignments.create_submission(valid_attrs)
+      assert submission.file_path == "some file_path"
+    end
+
+    test "create_submission/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Assignments.create_submission(@invalid_attrs)
+    end
+
+    test "update_submission/2 with valid data updates the submission" do
+      submission = submission_fixture()
+      update_attrs = %{file_path: "some updated file_path"}
+
+      assert {:ok, %Submission{} = submission} = Assignments.update_submission(submission, update_attrs)
+      assert submission.file_path == "some updated file_path"
+    end
+
+    test "update_submission/2 with invalid data returns error changeset" do
+      submission = submission_fixture()
+      assert {:error, %Ecto.Changeset{}} = Assignments.update_submission(submission, @invalid_attrs)
+      assert submission == Assignments.get_submission!(submission.id)
+    end
+
+    test "delete_submission/1 deletes the submission" do
+      submission = submission_fixture()
+      assert {:ok, %Submission{}} = Assignments.delete_submission(submission)
+      assert_raise Ecto.NoResultsError, fn -> Assignments.get_submission!(submission.id) end
+    end
+
+    test "change_submission/1 returns a submission changeset" do
+      submission = submission_fixture()
+      assert %Ecto.Changeset{} = Assignments.change_submission(submission)
+    end
+  end
 end

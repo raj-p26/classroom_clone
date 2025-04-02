@@ -57,7 +57,7 @@
 }
 
 .filled-tonal-button {
-  @apply base-button bg-secondary-container dark:bg-secondary-container-dark text-on-secondary-container dark:text-on-secondary-container-dark hover:shadow;
+  @apply base-button bg-secondary-container dark:bg-secondary-container-dark text-on-secondary-container dark:text-on-secondary-container-dark hover:shadow disabled:bg-on-surface/[0.12] dark:disabled:bg-on-surface-dark/[0.12] disabled:text-on-surface/[0.38] dark:disabled:text-on-surface-dark/[0.38];
 }
 
 .outlined-button {
@@ -65,17 +65,33 @@
 }
 
 .text-button {
-  @apply base-button text-primary dark:text-primary-dark hover:bg-surface-container/50 dark:hover:bg-surface-container-dark/50;
+  @apply base-button text-primary dark:text-primary-dark hover:bg-surface-container/50 dark:hover:bg-surface-container-dark/50 disabled:text-on-surface/[0.38] dark:disabled:text-on-surface-dark/[0.38];
 }
 
 .error-button {
-  @apply base-button text-error dark:text-error-dark bg-error-container dark:bg-error-container-dark;
+  @apply base-button bg-error dark:bg-error-dark text-on-error dark:text-on-error-dark;
+}
+
+.text-button-error {
+  @apply base-button text-error dark:text-error-dark hover:bg-surface-container/50 dark:hover:bg-surface-container-dark/50;
 }
 
 /* Floating Action Button styles */
 
 .base-fab {
-  @apply z-50 px-6 py-9 rounded-[20px] h-[40px] shadow-lg hover:shadow-xl flex items-center justify-center w-fit;
+  @apply z-50 shadow-lg hover:shadow-xl flex items-center justify-center;
+}
+
+.large-fab {
+  @apply h-[96px] w-[96px] rounded-[28px];
+}
+
+.small-fab {
+  @apply h-[40px] w-[40px] rounded-[12px];
+}
+
+.fab {
+  @apply h-[56px] w-[56px] rounded-[16px];
 }
 
 .primary-fab {

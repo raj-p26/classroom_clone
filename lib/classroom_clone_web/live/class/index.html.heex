@@ -2,7 +2,9 @@
   <:tab name={:stream} action={JS.patch(~p"/c/#{@class.id}/")}>Stream</:tab>
   <:tab name={:assignments} action={JS.patch(~p"/c/#{@class.id}/w")}>Assignments</:tab>
   <:tab name={:people} action={JS.patch(~p"/c/#{@class.id}/people")}>People</:tab>
-  <:tab name={:grades} action={JS.patch(~p"/c/#{@class.id}/grades")}>Grades</:tab>
+  <:tab :if={@is_class_owner} name={:grades} action={JS.patch(~p"/c/#{@class.id}/grades")}>
+    Grades
+  </:tab>
 </.tab_bar>
 
 <div class="px-10 my-4">
@@ -10,7 +12,7 @@
     <% :stream -> %>
       <div class="fixed bottom-14 right-14 z-50">
         <button
-          class="primary-fab"
+          class="primary-fab large-fab"
           id="create-announcement-fab"
           phx-hook="RippleEffect"
           title="Make announcement"
@@ -65,7 +67,7 @@
 
       <div :if={@is_class_owner} class="fixed bottom-14 right-14 z-50">
         <button
-          class="primary-fab"
+          class="primary-fab large-fab"
           id="create-assignment-btn"
           phx-click="create-asgmt"
           phx-hook="RippleEffect"
@@ -82,6 +84,7 @@
         <.live_component
           module={AssignmentFormComponent}
           class_id={@class.id}
+          user_id={@user.id}
           id="assignment-form-component"
         />
       </.modal>

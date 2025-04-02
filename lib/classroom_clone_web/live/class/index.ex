@@ -185,7 +185,7 @@ defmodule ClassroomCloneWeb.Class.Index do
       </div>
       <p class="mt-2">{@content}</p>
       <p>Attached documents: {@document_count}</p>
-      <div class="flex gap-4 mt-4">
+      <div class="flex items-center gap-4 mt-4">
         <button class="text-button" phx-click={JS.patch(~p"/c/#{@class_id}/a/#{@id}")}>
           View
         </button>
@@ -193,7 +193,7 @@ defmodule ClassroomCloneWeb.Class.Index do
           :if={@is_class_owner}
           id={"delete-#{@id}-btn"}
           phx-hook="RippleEffect"
-          class="error-button"
+          class="text-button-error"
           phx-click={
             JS.push("delete-announcement", value: %{id: @id})
             |> hide("#announcement-#{@id}")

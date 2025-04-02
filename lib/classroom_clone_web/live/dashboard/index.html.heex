@@ -18,23 +18,23 @@
 
 <div class="fixed bottom-14 right-14 flex items-center flex-col gap-2">
   <button
-    class="z-50 p-3 shadow-lg rounded-[20px] hover:shadow-xl bg-tertiary-container dark:bg-tertiary-container-dark text-on-tertiary-container dark:text-on-tertiary-container-dark"
+    class="tertiary-fab fab"
     phx-hook="RippleEffect"
     id="join-btn"
     title="Join Class"
     phx-click={JS.patch("/join")}
   >
-    <.icon name="hero-arrow-right-end-on-rectangle" />
+    <.icon name="hero-arrow-right-end-on-rectangle" class="size-[24px]" />
   </button>
 
   <button
-    class="primary-fab"
+    class="primary-fab large-fab"
     phx-hook="RippleEffect"
     id="create-btn"
     title="Create Class"
     phx-click={JS.patch("/create")}
   >
-    <.icon name="hero-plus" />
+    <.icon name="hero-plus" class="size-[36px]" />
   </button>
 </div>
 

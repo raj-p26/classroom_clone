@@ -73,7 +73,7 @@ defmodule ClassroomCloneWeb.Dashboard.Index do
       {:ok, new_enrollment} ->
         enrollment = Classroom.get_enrollment(new_enrollment.id)
         enrollments = [enrollment | enrollments]
-        Endpoint.broadcast(@enrollment_topic, "enrolled", enrollment.user_id)
+        Endpoint.broadcast(@enrollment_topic, "enrolled", enrollment.id)
 
         socket
         |> assign(:enrolled_classes, enrollments)

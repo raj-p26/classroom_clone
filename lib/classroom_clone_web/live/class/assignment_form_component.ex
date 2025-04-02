@@ -81,7 +81,10 @@ defmodule ClassroomCloneWeb.Class.AssignmentFormComponent do
 
   @impl true
   def handle_event("create-assignment", %{"assignment" => asgmt_params}, socket) do
-    asgmt_params = Map.put(asgmt_params, "class_id", socket.assigns.class_id)
+    asgmt_params =
+      asgmt_params
+      |> Map.put("user_id", socket.assigns.user_id)
+      |> Map.put("class_id", socket.assigns.class_id)
 
     handle_asgmt_create(Assignments.create_assignment(asgmt_params), socket)
   end

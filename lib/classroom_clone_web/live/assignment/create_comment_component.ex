@@ -9,10 +9,14 @@ defmodule ClassroomCloneWeb.Assignment.CreateCommentComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="outline-card">
+    <div>
       <.simple_form for={@comment} phx-submit="create-comment" phx-target={@myself}>
         <.input field={@comment[:content]} type="textarea" placeholder="Add a comment" />
-        <button class="filled-button" phx-disable-with>Post</button>
+        <:actions>
+          <button class="filled-button" phx-disable-with="posting...">
+            Post
+          </button>
+        </:actions>
       </.simple_form>
     </div>
     """
@@ -46,6 +50,7 @@ defmodule ClassroomCloneWeb.Assignment.CreateCommentComponent do
       case Comments.create_assignment_comment(comment_params) do
         {:ok, comment} ->
           Endpoint.broadcast(@assignment_comments_topic, "comment-created", comment.id)
+          notify_parent(:created)
 
           socket
           |> update(:comment, fn _ ->
@@ -59,4 +64,6 @@ defmodule ClassroomCloneWeb.Assignment.CreateCommentComponent do
 
     {:noreply, socket}
   end
+
+  defp notify_parent(info), do: send(self(), {__MODULE__, info})
 end

@@ -3,8 +3,21 @@
     <.back navigate={~p"/c/#{@class_id}/w"}>Back</.back>
   </div>
 
-  <div class="filled-card">
-    <p class="text-2xl font-semibold">{@assignment.title}</p>
+  <div class="outlined-card">
+    <div class="flex items-center gap-4">
+      <img src={@assignment.teacher_profile} class="size-10 rounded-full" />
+      <div>
+        <p class="text-2xl font-semibold">
+          {@assignment.title}
+        </p>
+        <p class="text-sm font-light mb-4">
+          {@assignment.teacher_username} &#x2022; {Calendar.strftime(
+            @assignment.created_at,
+            "%B %d, %Y [%I:%M %p]"
+          )}
+        </p>
+      </div>
+    </div>
     <p>{@assignment.description || "No Description Provided"}</p>
     <p class="flex items-center gap-2 mt-4">
       <.icon name="hero-calendar-days" />
@@ -32,9 +45,43 @@
       <.icon name="hero-document-arrow-down" />
       <p>{Path.basename(@assignment.doc_path)}</p>
     </a>
+
+    <%= if @assignment.teacher_id !== @user.id do %>
+      <div :if={@submission == []} class="mt-4">
+        <button
+          class="outlined-button"
+          id="asgmt-submit-btn"
+          phx-hook="RippleEffect"
+          phx-click="make-submission"
+        >
+          Attach work
+        </button>
+      </div>
+      <%= if @submission !== [] do %>
+        <hr class="border border-outline-variant dark:border-outline-variant-dark mt-6" />
+        <h1 class="text-xl my-4">Your Work</h1>
+        <a
+          :for={submission_file <- @submission}
+          class="elevated-card my-2 block"
+          target="_blank"
+          href={"/uploads/submissions/#{@user.id}/#{submission_file.file_name}"}
+        >
+          {submission_file.file_name}
+        </a>
+        <p
+          :if={
+            @assignment.due_date &&
+              Date.after?(Enum.at(@submission, 0).inserted_at, @assignment.due_date)
+          }
+          class="text-error dark:text-error-dark"
+        >
+          Late submission
+        </p>
+      <% end %>
+    <% end %>
   </div>
 
-  <hr class="border border-outline dark:border-outline-dark opacity-40 my-4" />
+  <hr class="border border-outline dark:border-outline-dark opacity-40 mt-8" />
 
   <.live_component
     module={CreateCommentComponent}
@@ -43,11 +90,22 @@
     assignment_id={@assignment_id}
   />
 
+  <div class="my-4"></div>
+
   <.header>
-    Comments
+    <.icon name="hero-users" /> Comments
   </.header>
 
   <div phx-update="stream" id="comments-container">
     <.show_comment :for={{id, comment} <- @streams.comments} id={id} comment={comment} />
   </div>
 </div>
+
+<.modal :if={@make_submission} id="submission-modal" show on_cancel={JS.push("cancel-submission")}>
+  <.live_component
+    module={SubmissionFormComponent}
+    id="submission-form-component"
+    user_id={@user.id}
+    assignment_id={@assignment_id}
+  />
+</.modal>
