@@ -1,0 +1,32 @@
+<.back navigate={~p"/c/#{@class_id}/w/#{@assignment_id}"}>
+  Back
+</.back>
+
+<div
+  :for={submission <- @submissions}
+  id={"submission-#{submission.id}"}
+  class="outlined-card my-4"
+>
+  <div class="flex items-center gap-4">
+    <img src={submission.user_avatar} class="size-10 rounded-full" />
+    <div>
+      <p>{submission.username}</p>
+      <p>Attached Documents: {submission.attached_docs_count}</p>
+      <p
+        :if={Date.before?(submission.assignment_due_date, submission.submitted_at)}
+        class="text-error dark:text-error-dark"
+      >
+        Late Submission
+      </p>
+    </div>
+  </div>
+  <.live_component
+    module={GradeComponent}
+    grade_id={submission.grade_id || ""}
+    submission_id={submission.id}
+    assignment_id={@assignment_id}
+    user_id={submission.user_id}
+    id={"grade-component-#{submission.id}"}
+  />
+  <p :if={submission.grade_id} class="mt-2">Graded</p>
+</div>

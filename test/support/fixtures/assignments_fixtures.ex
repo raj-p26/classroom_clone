@@ -33,4 +33,18 @@ defmodule ClassroomClone.AssignmentsFixtures do
 
     submission
   end
+
+  @doc """
+  Generate a grade.
+  """
+  def grade_fixture(attrs \\ %{}) do
+    {:ok, grade} =
+      attrs
+      |> Enum.into(%{
+        grades: "120.5"
+      })
+      |> ClassroomClone.Assignments.create_grade()
+
+    grade
+  end
 end

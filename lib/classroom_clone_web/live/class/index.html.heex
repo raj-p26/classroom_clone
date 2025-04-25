@@ -10,15 +10,15 @@
 <div class="px-10 my-4">
   <%= case @live_action do %>
     <% :stream -> %>
-      <div class="fixed bottom-14 right-14 z-50">
+      <div class="fixed bottom-4 right-4 z-50">
         <button
-          class="primary-fab large-fab"
+          class="primary-fab fab"
           id="create-announcement-fab"
           phx-hook="RippleEffect"
           title="Make announcement"
           phx-click="open-announcement-modal"
         >
-          <.icon name="hero-megaphone" />
+          <.icon name="hero-megaphone" class="size-[24px]" />
         </button>
       </div>
 
@@ -65,14 +65,14 @@
         </:item>
       </.list_view>
 
-      <div :if={@is_class_owner} class="fixed bottom-14 right-14 z-50">
+      <div :if={@is_class_owner} class="fixed bottom-4 right-4 z-50">
         <button
-          class="primary-fab large-fab"
+          class="primary-fab fab"
           id="create-assignment-btn"
           phx-click="create-asgmt"
           phx-hook="RippleEffect"
         >
-          <.icon name="hero-pencil-square" />
+          <.icon name="hero-pencil" class="size-[24px]" />
         </button>
       </div>
       <.modal

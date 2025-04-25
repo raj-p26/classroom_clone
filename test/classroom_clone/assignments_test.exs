@@ -114,4 +114,58 @@ defmodule ClassroomClone.AssignmentsTest do
       assert %Ecto.Changeset{} = Assignments.change_submission(submission)
     end
   end
+
+  describe "grades" do
+    alias ClassroomClone.Assignments.Grade
+
+    import ClassroomClone.AssignmentsFixtures
+
+    @invalid_attrs %{grades: nil}
+
+    test "list_grades/0 returns all grades" do
+      grade = grade_fixture()
+      assert Assignments.list_grades() == [grade]
+    end
+
+    test "get_grade!/1 returns the grade with given id" do
+      grade = grade_fixture()
+      assert Assignments.get_grade!(grade.id) == grade
+    end
+
+    test "create_grade/1 with valid data creates a grade" do
+      valid_attrs = %{grades: "120.5"}
+
+      assert {:ok, %Grade{} = grade} = Assignments.create_grade(valid_attrs)
+      assert grade.grades == Decimal.new("120.5")
+    end
+
+    test "create_grade/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Assignments.create_grade(@invalid_attrs)
+    end
+
+    test "update_grade/2 with valid data updates the grade" do
+      grade = grade_fixture()
+      update_attrs = %{grades: "456.7"}
+
+      assert {:ok, %Grade{} = grade} = Assignments.update_grade(grade, update_attrs)
+      assert grade.grades == Decimal.new("456.7")
+    end
+
+    test "update_grade/2 with invalid data returns error changeset" do
+      grade = grade_fixture()
+      assert {:error, %Ecto.Changeset{}} = Assignments.update_grade(grade, @invalid_attrs)
+      assert grade == Assignments.get_grade!(grade.id)
+    end
+
+    test "delete_grade/1 deletes the grade" do
+      grade = grade_fixture()
+      assert {:ok, %Grade{}} = Assignments.delete_grade(grade)
+      assert_raise Ecto.NoResultsError, fn -> Assignments.get_grade!(grade.id) end
+    end
+
+    test "change_grade/1 returns a grade changeset" do
+      grade = grade_fixture()
+      assert %Ecto.Changeset{} = Assignments.change_grade(grade)
+    end
+  end
 end

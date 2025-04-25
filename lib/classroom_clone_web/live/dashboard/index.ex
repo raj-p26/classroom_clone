@@ -2,16 +2,9 @@ defmodule ClassroomCloneWeb.Dashboard.Index do
   alias ClassroomClone.Classroom.Class
   alias ClassroomCloneWeb.Dashboard.CreateClassComponent
   alias ClassroomClone.Classroom
-  alias ClassroomCloneWeb.Endpoint
   use ClassroomCloneWeb, :live_view
 
-  @enrollment_topic "enrollment"
-
   def mount(_params, %{"user" => user}, socket) do
-    if connected?(socket) do
-      Endpoint.subscribe(@enrollment_topic)
-    end
-
     socket =
       socket
       |> assign(:user, user)
@@ -73,7 +66,6 @@ defmodule ClassroomCloneWeb.Dashboard.Index do
       {:ok, new_enrollment} ->
         enrollment = Classroom.get_enrollment(new_enrollment.id)
         enrollments = [enrollment | enrollments]
-        Endpoint.broadcast(@enrollment_topic, "enrolled", enrollment.id)
 
         socket
         |> assign(:enrolled_classes, enrollments)

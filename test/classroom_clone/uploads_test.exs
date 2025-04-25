@@ -110,4 +110,58 @@ defmodule ClassroomClone.UploadsTest do
       assert %Ecto.Changeset{} = Uploads.change_assignment_doc(assignment_doc)
     end
   end
+
+  describe "submission_docs" do
+    alias ClassroomClone.Uploads.SubmissionDoc
+
+    import ClassroomClone.UploadsFixtures
+
+    @invalid_attrs %{file_name: nil}
+
+    test "list_submission_docs/0 returns all submission_docs" do
+      submission_doc = submission_doc_fixture()
+      assert Uploads.list_submission_docs() == [submission_doc]
+    end
+
+    test "get_submission_doc!/1 returns the submission_doc with given id" do
+      submission_doc = submission_doc_fixture()
+      assert Uploads.get_submission_doc!(submission_doc.id) == submission_doc
+    end
+
+    test "create_submission_doc/1 with valid data creates a submission_doc" do
+      valid_attrs = %{file_name: "some file_name"}
+
+      assert {:ok, %SubmissionDoc{} = submission_doc} = Uploads.create_submission_doc(valid_attrs)
+      assert submission_doc.file_name == "some file_name"
+    end
+
+    test "create_submission_doc/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Uploads.create_submission_doc(@invalid_attrs)
+    end
+
+    test "update_submission_doc/2 with valid data updates the submission_doc" do
+      submission_doc = submission_doc_fixture()
+      update_attrs = %{file_name: "some updated file_name"}
+
+      assert {:ok, %SubmissionDoc{} = submission_doc} = Uploads.update_submission_doc(submission_doc, update_attrs)
+      assert submission_doc.file_name == "some updated file_name"
+    end
+
+    test "update_submission_doc/2 with invalid data returns error changeset" do
+      submission_doc = submission_doc_fixture()
+      assert {:error, %Ecto.Changeset{}} = Uploads.update_submission_doc(submission_doc, @invalid_attrs)
+      assert submission_doc == Uploads.get_submission_doc!(submission_doc.id)
+    end
+
+    test "delete_submission_doc/1 deletes the submission_doc" do
+      submission_doc = submission_doc_fixture()
+      assert {:ok, %SubmissionDoc{}} = Uploads.delete_submission_doc(submission_doc)
+      assert_raise Ecto.NoResultsError, fn -> Uploads.get_submission_doc!(submission_doc.id) end
+    end
+
+    test "change_submission_doc/1 returns a submission_doc changeset" do
+      submission_doc = submission_doc_fixture()
+      assert %Ecto.Changeset{} = Uploads.change_submission_doc(submission_doc)
+    end
+  end
 end

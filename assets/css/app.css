@@ -79,7 +79,7 @@
 /* Floating Action Button styles */
 
 .base-fab {
-  @apply z-50 shadow-lg hover:shadow-xl flex items-center justify-center;
+  @apply z-50 shadow-[6px] hover:shadow-[8px] flex items-center justify-center;
 }
 
 .large-fab {

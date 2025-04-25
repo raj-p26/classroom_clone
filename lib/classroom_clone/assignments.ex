@@ -4,6 +4,8 @@ defmodule ClassroomClone.Assignments do
   """
 
   import Ecto.Query, warn: false
+  alias ClassroomClone.Uploads.SubmissionDoc
+  alias ClassroomClone.Assignments.Grade
   alias ClassroomClone.Accounts.User
   alias ClassroomClone.Uploads.AssignmentDoc
   alias ClassroomClone.Repo
@@ -48,7 +50,7 @@ defmodule ClassroomClone.Assignments do
       ** (Ecto.NoResultsError)
 
   """
-  def get_assignment!(id), do: Repo.get!(Assignment, id)
+  def get_assignment_by_id(id), do: Repo.get(Assignment, id)
 
   def get_assignment(id) do
     Assignment
@@ -149,6 +151,28 @@ defmodule ClassroomClone.Assignments do
     Repo.all(Submission)
   end
 
+  def list_submissions_by_assignment_id(assignment_id) do
+    Submission
+    |> where([s], s.assignment_id == ^assignment_id)
+    |> join(:left, [s], u in User, on: s.user_id == u.id)
+    |> join(:left, [s, u], g in Grade, on: s.id == g.submission_id)
+    |> join(:left, [s, u, g], sd in SubmissionDoc, on: s.id == sd.submission_id)
+    |> join(:inner, [s, u, g, sd], a in Assignment, on: s.assignment_id == a.id)
+    |> group_by([s, u, g, sd, a], u.id)
+    |> select([s, u, g, sd, a], %{
+      id: s.id,
+      user_id: u.id,
+      user_avatar: u.avatar,
+      username: u.username,
+      attached_docs_count: count(sd.id),
+      grade_id: g.id,
+      grades: g.score,
+      assignment_due_date: a.due_date,
+      submitted_at: s.inserted_at
+    })
+    |> Repo.all()
+  end
+
   @doc """
   Gets a single submission.
 
@@ -168,7 +192,7 @@ defmodule ClassroomClone.Assignments do
   def get_submission(student_id, assignment_id) do
     Submission
     |> where([s], s.assignment_id == ^assignment_id and s.user_id == ^student_id)
-    |> Repo.all()
+    |> Repo.one()
   end
 
   @doc """
@@ -234,5 +258,101 @@ defmodule ClassroomClone.Assignments do
   """
   def change_submission(%Submission{} = submission, attrs \\ %{}) do
     Submission.changeset(submission, attrs)
+  end
+
+  alias ClassroomClone.Assignments.Grade
+
+  @doc """
+  Returns the list of grades.
+
+  ## Examples
+
+      iex> list_grades()
+      [%Grade{}, ...]
+
+  """
+  def list_grades do
+    Repo.all(Grade)
+  end
+
+  @doc """
+  Gets a single grade.
+
+  Raises `Ecto.NoResultsError` if the Grade does not exist.
+
+  ## Examples
+
+      iex> get_grade!(123)
+      %Grade{}
+
+      iex> get_grade!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_grade!(id), do: Repo.get!(Grade, id)
+
+  @doc """
+  Creates a grade.
+
+  ## Examples
+
+      iex> create_grade(%{field: value})
+      {:ok, %Grade{}}
+
+      iex> create_grade(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_grade(attrs \\ %{}) do
+    %Grade{}
+    |> Grade.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a grade.
+
+  ## Examples
+
+      iex> update_grade(grade, %{field: new_value})
+      {:ok, %Grade{}}
+
+      iex> update_grade(grade, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_grade(%Grade{} = grade, attrs) do
+    grade
+    |> Grade.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a grade.
+
+  ## Examples
+
+      iex> delete_grade(grade)
+      {:ok, %Grade{}}
+
+      iex> delete_grade(grade)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_grade(%Grade{} = grade) do
+    Repo.delete(grade)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking grade changes.
+
+  ## Examples
+
+      iex> change_grade(grade)
+      %Ecto.Changeset{data: %Grade{}}
+
+  """
+  def change_grade(%Grade{} = grade, attrs \\ %{}) do
+    Grade.changeset(grade, attrs)
   end
 end

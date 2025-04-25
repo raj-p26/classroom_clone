@@ -199,7 +199,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8">
+      <div>
         {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
           {render_slot(action, f)}
@@ -273,7 +273,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
   attr :type, :string,
     default: "text",
     values: ~w(checkbox color date datetime-local email file month number password
-               range search select tel text textarea time url week)
+               range search select tel text textarea time url week hidden)
 
   attr :field, Phoenix.HTML.FormField,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
@@ -376,7 +376,7 @@ defmodule ClassroomCloneWeb.CoreComponents do
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
           "mt-2 block w-full rounded-lg focus:ring-0 sm:text-sm sm:leading-6 bg-transparent",
-          "caret-primary caret-primary-dark",
+          "caret-primary dark:caret-primary-dark",
           @errors == [] &&
             "border-outline dark:border-outline-dark focus:border-primary focus:dark:border-primary-dark",
           @errors != [] && "border-error focus:border-error"

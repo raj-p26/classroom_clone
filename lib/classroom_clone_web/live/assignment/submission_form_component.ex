@@ -1,4 +1,5 @@
 defmodule ClassroomCloneWeb.Assignment.SubmissionFormComponent do
+  alias ClassroomClone.Uploads
   alias ClassroomClone.Assignments
   alias ClassroomClone.Assignments.Submission
   use ClassroomCloneWeb, :live_component
@@ -90,12 +91,17 @@ defmodule ClassroomCloneWeb.Assignment.SubmissionFormComponent do
     user_id = socket.assigns.user_id
     assignment_id = socket.assigns.assignment_id
 
+    {:ok, submission} =
+      Assignments.create_submission(%{
+        "user_id" => user_id,
+        "assignment_id" => assignment_id
+      })
+
     _ =
       consume_uploaded_entries(socket, :submission_docs, fn %{path: path}, entry ->
-        {:ok, submission} =
-          Assignments.create_submission(%{
-            "user_id" => user_id,
-            "assignment_id" => assignment_id,
+        {:ok, _submission_doc} =
+          Uploads.create_submission_doc(%{
+            "submission_id" => submission.id,
             "file_name" => entry.client_name
           })
 

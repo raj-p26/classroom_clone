@@ -16,9 +16,9 @@
   </div>
 </div>
 
-<div class="fixed bottom-14 right-14 flex items-center flex-col gap-2">
+<div class="fixed right-4 bottom-4 flex items-center flex-col gap-2">
   <button
-    class="tertiary-fab fab"
+    class="tertiary-fab small-fab"
     phx-hook="RippleEffect"
     id="join-btn"
     title="Join Class"
@@ -28,13 +28,13 @@
   </button>
 
   <button
-    class="primary-fab large-fab"
+    class="fab primary-fab"
     phx-hook="RippleEffect"
     id="create-btn"
     title="Create Class"
     phx-click={JS.patch("/create")}
   >
-    <.icon name="hero-plus" class="size-[36px]" />
+    <.icon name="hero-plus" class="size-[24px]" />
   </button>
 </div>
 

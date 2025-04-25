@@ -32,15 +32,15 @@
     <.show_comment :for={{id, comment} <- @streams.comments} id={id} comment={comment} />
   </div>
 
-  <div class="fixed bottom-14 right-14">
+  <div class="fixed bottom-4 right-4">
     <button
-      class="primary-fab large-fab"
+      class="primary-fab fab"
       id="create-comment-btn"
       phx-hook="RippleEffect"
       phx-click="show-create-comment-modal"
       title="Add comment"
     >
-      <.icon name="hero-chat-bubble-bottom-center-text" />
+      <.icon name="hero-chat-bubble-bottom-center-text" class="size-[24px]" />
     </button>
   </div>
 

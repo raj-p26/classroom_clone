@@ -1,4 +1,5 @@
 defmodule ClassroomCloneWeb.Assignment.Index do
+  alias ClassroomClone.Uploads
   alias ClassroomCloneWeb.Endpoint
   alias ClassroomClone.Comments
   alias ClassroomClone.Assignments
@@ -46,9 +47,16 @@ defmodule ClassroomCloneWeb.Assignment.Index do
     assignment_id = socket.assigns.assignment_id
     submission = Assignments.get_submission(user_id, assignment_id)
 
+    socket =
+      if submission !== nil do
+        submission_docs = Uploads.list_submission_docs_by_id(submission.id)
+        assign(socket, :submission_docs, submission_docs)
+      else
+        assign(socket, :submission_docs, [])
+      end
+
     socket
     |> assign(:submission, submission)
-    |> assign(:submitted, submission !== [])
   end
 
   defp stream_comments(socket) do

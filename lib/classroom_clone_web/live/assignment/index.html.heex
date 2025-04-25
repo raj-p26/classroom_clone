@@ -47,7 +47,7 @@
     </a>
 
     <%= if @assignment.teacher_id !== @user.id do %>
-      <div :if={@submission == []} class="mt-4">
+      <div :if={@submission_docs == []} class="mt-4">
         <button
           class="outlined-button"
           id="asgmt-submit-btn"
@@ -57,21 +57,21 @@
           Attach work
         </button>
       </div>
-      <%= if @submission !== [] do %>
+      <%= if @submission_docs !== [] do %>
         <hr class="border border-outline-variant dark:border-outline-variant-dark mt-6" />
         <h1 class="text-xl my-4">Your Work</h1>
         <a
-          :for={submission_file <- @submission}
+          :for={doc <- @submission_docs}
           class="elevated-card my-2 block"
           target="_blank"
-          href={"/uploads/submissions/#{@user.id}/#{submission_file.file_name}"}
+          href={"/uploads/submissions/#{@user.id}/#{doc.file_name}"}
         >
-          {submission_file.file_name}
+          {doc.file_name}
         </a>
         <p
           :if={
             @assignment.due_date &&
-              Date.after?(Enum.at(@submission, 0).inserted_at, @assignment.due_date)
+              Date.after?(@submission.inserted_at, @assignment.due_date)
           }
           class="text-error dark:text-error-dark"
         >
@@ -79,9 +79,18 @@
         </p>
       <% end %>
     <% end %>
+
+    <%= if @assignment.teacher_id === @user.id do %>
+      <button
+        phx-click={JS.patch(~p"/c/#{@class_id}/w/#{@assignment_id}/submissions")}
+        class="filled-tonal-button mt-4"
+      >
+        See submissions
+      </button>
+    <% end %>
   </div>
 
-  <hr class="border border-outline dark:border-outline-dark opacity-40 mt-8" />
+  <hr class="border border-outline dark:border-outline-dark opacity-40 my-8" />
 
   <.live_component
     module={CreateCommentComponent}

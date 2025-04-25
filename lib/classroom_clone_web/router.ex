@@ -40,6 +40,8 @@ defmodule ClassroomCloneWeb.Router do
     live "/c/:id/a/:announcement_id", Announcements.Index
 
     live "/c/:id/w/:work_id", Assignment.Index
+
+    live "/c/:id/w/:work_id/submissions", Submission.Index
   end
 
   scope "/auth", ClassroomCloneWeb do
