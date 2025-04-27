@@ -319,6 +319,15 @@ defmodule ClassroomClone.Classroom do
     query_result !== nil
   end
 
+  def unenroll_user(user_id, class_id) do
+    enrollment =
+      Enrollment
+      |> where([e], e.class_id == ^class_id and e.user_id == ^user_id)
+      |> Repo.one()
+
+    Repo.delete(enrollment)
+  end
+
   alias ClassroomClone.Classroom.Announcement
 
   @doc """

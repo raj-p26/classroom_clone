@@ -12,25 +12,38 @@ defmodule ClassroomCloneWeb.Class.Index do
   @assignments_topic "assignments"
 
   @impl true
-  def mount(params, %{"user" => user}, socket) do
+  def mount(%{"id" => class_id} = _params, %{"user" => user}, socket) do
     if connected?(socket) do
       Endpoint.subscribe(@announcements_topic)
       Endpoint.subscribe(@assignments_topic)
     end
 
+    user_enrolled? = Classroom.user_enrolled?(class_id, user.id)
+    owner? = Classroom.class_owner?(class_id, user.id)
+
     socket =
-      socket
-      |> assign(:user, user)
-      |> assign_class(params["id"])
-      |> assign_enrollments
-      |> assign_live_title
-      |> assign_announcements
-      |> assign_is_class_owner
-      |> assign_assignments
-      |> assign(:make_announcement, false)
-      |> assign(:create_assignment, false)
+      if !user_enrolled? && !owner? do
+        socket
+        |> push_navigate(to: ~p"/dashboard")
+        |> put_flash(:error, "You are unauthorized")
+      else
+        init_assigns(socket, user, class_id)
+      end
 
     {:ok, socket}
+  end
+
+  defp init_assigns(socket, user, class_id) do
+    socket
+    |> assign(:user, user)
+    |> assign_class(class_id)
+    |> assign_enrollments
+    |> assign_live_title
+    |> assign_announcements
+    |> assign_is_class_owner
+    |> assign_assignments
+    |> assign(:make_announcement, false)
+    |> assign(:create_assignment, false)
   end
 
   defp assign_class(socket, class_id) do
@@ -102,6 +115,25 @@ defmodule ClassroomCloneWeb.Class.Index do
     result = Classroom.delete_announcement_by_id(id)
 
     delete_announcement(socket, id, result)
+  end
+
+  @impl true
+  def handle_event("unenroll", _params, socket) do
+    result = Classroom.unenroll_user(socket.assigns.user.id, socket.assigns.class.id)
+
+    socket =
+      case result do
+        {:ok, _} ->
+          socket
+          |> put_flash(:info, "Unenrolled")
+          |> push_navigate(to: ~p"/dashboard")
+
+        {:error, e} ->
+          IO.inspect(e)
+          put_flash(socket, :error, "Something went wrong")
+      end
+
+    {:noreply, socket}
   end
 
   defp delete_announcement(socket, id, {:ok, _}) do

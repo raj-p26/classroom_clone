@@ -2,9 +2,6 @@
   <:tab name={:stream} action={JS.patch(~p"/c/#{@class.id}/")}>Stream</:tab>
   <:tab name={:assignments} action={JS.patch(~p"/c/#{@class.id}/w")}>Assignments</:tab>
   <:tab name={:people} action={JS.patch(~p"/c/#{@class.id}/people")}>People</:tab>
-  <:tab :if={@is_class_owner} name={:grades} action={JS.patch(~p"/c/#{@class.id}/grades")}>
-    Grades
-  </:tab>
 </.tab_bar>
 
 <div class="px-10 my-4">
@@ -23,13 +20,12 @@
       </div>
 
       <div class="md:flex md:gap-4 relative">
-        <.card
-          :if={@class.user_id === @user.id}
-          id="class-code-card"
-          class="md:sticky md:top-[150px]"
-        >
+        <.card id="class-code-card" class="md:sticky md:top-[150px]">
           <:card_title>Class Code</:card_title>
           <h1 class="text-xl font-bold text-primary dark:text-primary-dark">{@class.id}</h1>
+          <button :if={@class.user_id !== @user.id} class="text-button-error" phx-click="unenroll">
+            Unenroll
+          </button>
         </.card>
         <div class="md:w-[75%]">
           <.modal

@@ -18,7 +18,10 @@
         </p>
       </div>
     </div>
-    <p>{@assignment.description || "No Description Provided"}</p>
+    <p :if={@assignment.description}>{@assignment.description}</p>
+    <p :if={!@assignment.description} class="text-outline dark:text-outline-dark">
+      No description provided
+    </p>
     <p class="flex items-center gap-2 mt-4">
       <.icon name="hero-calendar-days" />
       <%= if @assignment.due_date do %>
